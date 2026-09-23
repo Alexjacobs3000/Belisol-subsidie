@@ -10,6 +10,7 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
 ## Opbouw
 - `streamlit_app.py` — webapp (Streamlit Cloud). Gebruiker uploadt **bestelling** (definitieve opmeting, vaak
   handgeschreven scan) én **Uw-rapport**; bevestigt flens; vult klantgegevens in; downloadt PDF (+ JSON).
+  Bij Certix vervalt stap 2 (bestelling controleren) en is de bestelling optioneel: rapport = altijd binnenmaat.
 - `api.py` (FastAPI) / `verwerk.py` (CLI) — zelfde verwerking voor n8n/Zapier.
 - `subsidie/parser.py` — PDF → posities (afmetingen, Uw/Uf/Ug, panelen, glas, kozijnschets).
 - `subsidie/rules.py` — subsidieregels, flens, meldcodes, bedragen, waarschuwingen.

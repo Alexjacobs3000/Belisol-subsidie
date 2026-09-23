@@ -30,7 +30,9 @@ samples/                voorbeeld Bisheshar 2063 (invoer, JSON en PDF)
 `streamlit_app.py` is de webversie voor collega's:
 
 1. upload de **bestelling** (definitieve opmeting) én het **Uw-rapport** van de leverancier;
-2. controleer de bestelling (pagina's worden getoond) en bevestig of er een flens/aanslag is;
+2. controleer de bestelling (pagina's worden getoond) en bevestig of er een flens/aanslag is.
+   **Bij Certix wordt deze stap overgeslagen** (en is de bestelling niet nodig): het Certix Uw-rapport
+   toont altijd de binnenmaat, zonder flens;
 3. vul de klantgegevens aan;
 4. bekijk de uitkomst en waarschuwingen en **download het subsidie-overzicht (PDF)** (en optioneel de JSON).
 
