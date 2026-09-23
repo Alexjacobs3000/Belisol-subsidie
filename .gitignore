@@ -1,0 +1,10 @@
+# Klantdata nooit committen
+samples/
+*.eml
+uit.json
+uit.pdf
+
+__pycache__/
+*.pyc
+.venv/
+.streamlit/secrets.toml
