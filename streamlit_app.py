@@ -72,14 +72,73 @@ def step(titel: str):
     st.markdown(f"<h3><span class='stepnr'>{_stapnr}</span>{titel}</h3>", unsafe_allow_html=True)
 
 
+@st.cache_data(show_spinner=False)
+def _parse(uw_bytes: bytes):
+    return parse_report(uw_bytes)
+
+
+@st.cache_data(show_spinner=False)
+def _bestelling(b: bytes):
+    return lees_bestelling(b)
+
+
+# ---------------------------------------------------------------- opnieuw beginnen
+st.session_state.setdefault("dossier", 0)
+dossier = st.session_state["dossier"]  # onderdeel van de widget-keys: ophogen = lege uploads en formulier
+
+
+def _markeer_gedownload():
+    st.session_state["pdf_gedownload"] = True
+
+
+def _opnieuw_beginnen():
+    """Wist uploads, klantgegevens en resultaat (ook uit de cache) en begint een nieuw dossier."""
+    for k in ("result", "pdf", "sig", "pdf_gedownload"):
+        st.session_state.pop(k, None)
+    st.session_state["dossier"] += 1
+    _parse.clear()
+    _bestelling.clear()
+
+
+@st.dialog("Nieuw dossier starten?")
+def _bevestig_opnieuw():
+    if not st.session_state.get("pdf"):  # net gedownload en gewist -> hele app opnieuw tekenen (sluit dialoog)
+        st.rerun()
+    st.warning("Het subsidie-overzicht van dit dossier is **nog niet gedownload**. "
+               "Bij opnieuw beginnen worden de geüploade bestanden en het resultaat gewist.")
+    st.download_button("⬇  Eerst downloaden, dan opnieuw beginnen", data=st.session_state["pdf"],
+                       file_name=f"{st.session_state['bestandsnaam']}.pdf", mime="application/pdf",
+                       type="primary", width="stretch", on_click=_opnieuw_beginnen)
+    a, b = st.columns(2)
+    if a.button("Niet downloaden, wissen", width="stretch"):
+        _opnieuw_beginnen()
+        st.rerun()
+    if b.button("Annuleren", width="stretch"):
+        st.rerun()
+
+
+def opnieuw_knop(label: str, key: str, **kw):
+    """Knop 'nieuw dossier'; vraagt eerst om te downloaden als het overzicht nog niet is gedownload."""
+    if st.button(label, key=key, icon=":material/restart_alt:", **kw):
+        if st.session_state.get("pdf") and not st.session_state.get("pdf_gedownload"):
+            _bevestig_opnieuw()
+        else:
+            _opnieuw_beginnen()
+            st.rerun()
+
+
 # ---------------------------------------------------------------- kop
-c1, c2 = st.columns([1, 9])
+c1, c2, c3 = st.columns([1, 7, 2], vertical_alignment="center")
 with c1:
     st.image(str(ASSETS / "belisol_logo.png"), width=80)
 with c2:
     st.title("Subsidie-overzicht ISDE")
     st.markdown("<span class='muted'>Upload het Uw-rapport van de leverancier en (behalve bij Certix) de bestelling. "
                 "De app berekent de subsidiegegevens en maakt het overzicht voor de klant.</span>", unsafe_allow_html=True)
+with c3:
+    if st.session_state.get(f"uw_{dossier}") or st.session_state.get(f"best_{dossier}"):
+        opnieuw_knop("Nieuw dossier", key="opnieuw_kop", width="stretch",
+                     help="Wist de geüploade bestanden en klantgegevens en begint opnieuw.")
 
 with st.sidebar:
     st.image(str(ASSETS / "belisol_logo.png"), width=70)
@@ -94,23 +153,13 @@ with st.sidebar:
 step("Documenten uploaden")
 u1, u2 = st.columns(2)
 with u1:
-    f_best = st.file_uploader("Bestelling / definitieve opmeting (PDF) — niet nodig bij Certix", type=["pdf"], key="best")
+    f_best = st.file_uploader("Bestelling / definitieve opmeting (PDF) — niet nodig bij Certix", type=["pdf"], key=f"best_{dossier}")
 with u2:
-    f_uw = st.file_uploader("Uw-rapport / thermisch rapport leverancier (PDF)", type=["pdf"], key="uw")
+    f_uw = st.file_uploader("Uw-rapport / thermisch rapport leverancier (PDF)", type=["pdf"], key=f"uw_{dossier}")
 
 if not f_uw:
     st.info("Upload het **Uw-rapport** (en, behalve bij Certix, de bestelling) om verder te gaan.")
     st.stop()
-
-
-@st.cache_data(show_spinner=False)
-def _parse(uw_bytes: bytes):
-    return parse_report(uw_bytes)
-
-
-@st.cache_data(show_spinner=False)
-def _bestelling(b: bytes):
-    return lees_bestelling(b)
 
 
 try:
@@ -135,6 +184,7 @@ if st.session_state.get("sig") != sig:
     st.session_state["sig"] = sig
     st.session_state.pop("result", None)
     st.session_state.pop("pdf", None)
+    st.session_state.pop("pdf_gedownload", None)
 
 rapport_flens = any(
     any(k.split()[0] in ("101.331", "101.333") or "aanslag" in k.lower() for k in p.materialen.get("KADER", []))
@@ -179,7 +229,7 @@ else:
 
 # ---------------------------------------------------------------- 3. klantgegevens
 step("Klantgegevens")
-with st.form("klant"):
+with st.form(f"klant_{dossier}"):
     k1, k2, k3 = st.columns(3)
     naam = k1.text_input("Naam klant", value=best["velden"].get("naam") or report.klantnaam or "")
     aanhef = k2.text_input("Aanhef", value=f"Geachte heer/mevrouw {report.klantnaam or ''}".strip())
@@ -204,6 +254,7 @@ if ok:
         result = evaluate(report, klant)
         pdf = render_pdf(result, report)
     st.session_state["result"], st.session_state["pdf"] = result, pdf
+    st.session_state["pdf_gedownload"] = False
 result, pdf = st.session_state["result"], st.session_state["pdf"]
 
 # ---------------------------------------------------------------- 4. resultaat
@@ -240,8 +291,18 @@ with st.expander("Detail per positie"):
          for p in result["posities"]], hide_index=True, use_container_width=True)
 
 bestandsnaam = f"Subsidie-overzicht {result['klant']['naam'] or 'klant'} {result['klant']['huisnummer'] or ''}".strip()
+st.session_state["bestandsnaam"] = bestandsnaam
 d1, d2 = st.columns([2, 1])
 d1.download_button("⬇  Download subsidie-overzicht (PDF)", data=pdf, file_name=f"{bestandsnaam}.pdf",
-                   mime="application/pdf", type="primary", use_container_width=True)
+                   mime="application/pdf", type="primary", use_container_width=True, on_click=_markeer_gedownload)
 d2.download_button("Download gegevens (JSON)", data=json.dumps(result, ensure_ascii=False, indent=2),
                    file_name=f"{bestandsnaam}.json", mime="application/json", use_container_width=True)
+
+st.divider()
+n1, n2 = st.columns([2, 1], vertical_alignment="center")
+if st.session_state.get("pdf_gedownload"):
+    n1.success("Subsidie-overzicht gedownload. Je kunt een nieuw dossier starten.")
+else:
+    n1.caption("Klaar met deze klant? Download eerst het overzicht en start dan een nieuw dossier.")
+with n2:
+    opnieuw_knop("Nieuw dossier starten", key="opnieuw_onder", width="stretch")
