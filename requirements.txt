@@ -1,0 +1,10 @@
+pdfplumber>=0.11
+numpy
+pillow
+jinja2>=3.1
+weasyprint>=62
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart
+streamlit>=1.40
+openpyxl

@@ -1,0 +1,133 @@
+{
+  "_uitleg": "Instellingen voor de ISDE-subsidieverwerker. Pas bedragen, meldcodes en vestigingen hier aan zonder de code te wijzigen.",
+
+  "tarieven": {
+    "_bron": "Belisol subsidiebrochure FEB26, tabel 'Subsidiebedragen per m2'",
+    "tot_2024": {
+      "hr_plus_plus_glas": 23.0,
+      "triple_glas": 65.5,
+      "paneel_laag": 10.0,
+      "paneel_hoog": 45.0,
+      "deur_laag": 23.0,
+      "deur_hoog": 65.5
+    },
+    "vanaf_2025": {
+      "hr_plus_plus_glas": 25.0,
+      "triple_glas": 111.0,
+      "paneel_laag": 10.0,
+      "paneel_hoog": 45.0,
+      "deur_laag": 25.0,
+      "deur_hoog": 111.0
+    }
+  },
+
+  "tarieven_panelen_2026": {
+    "_uitleg": "Isolerende panelen in kozijnen staan niet in de meldcodelijst Hoogrendementsglas. Bedragen enkele maatregel uit de brochure; bij meerdere maatregelen verdubbeld (volgens brochure). Monument: geen apart bedrag bekend.",
+    "paneel_hoog": {"enkel": 45.0, "meerdere": 90.0, "monument": null},
+    "paneel_laag": {"enkel": 10.0, "meerdere": 20.0, "monument": null}
+  },
+
+  "grenswaarden": {
+    "triple_glas_ug_max": 0.7,
+    "hr_plus_plus_glas_ug_max": 1.2,
+    "paneel_hoog_u_max": 0.7,
+    "paneel_laag_u_max": 1.2,
+    "deur_hoog_ud_max": 1.0,
+    "deur_laag_ud_max": 1.5,
+    "min_m2_vanaf_2025": 3.0,
+    "min_m2_tot_2024": 8.0,
+    "max_m2": 45.0
+  },
+
+  "panelen": {
+    "_uitleg": "'meetellen_bij_kozijn' = paneeloppervlak zit in de kozijn-m2 (zoals in de huidige Belisol-infomails). 'apart' = paneel-m2 wordt apart gezet als maatregel 'isolerend paneel in kozijn'.",
+    "modus": "meetellen_bij_kozijn"
+  },
+
+  "deur_herkenning": {
+    "_uitleg": "Een positie wordt als deur gezien als een vleugelartikel in deze lijst staat, of als een van de trefwoorden in de omschrijving/positienaam voorkomt.",
+    "vleugel_artikels": ["103.446"],
+    "trefwoorden": ["deur", "voordeur", "achterdeur", "tuindeur", "door"],
+    "heuristiek_min_hoogte_mm": 1950,
+    "heuristiek_max_breedte_mm": 1250
+  },
+
+  "flens": {
+    "_uitleg": "In Nederland telt de flens (aanslag / aanslagprofiel / T-kader) niet mee: die wordt aan alle zijden van de maatvoering afgetrokken. Per systeem staat hier welke kaderprofielen een flens hebben, hoe breed die is en of het leveranciersrapport de maten al zonder flens geeft ('rapportmaten_zonder_flens'). Bij Certix geeft het Uw-rapport de kadermaat zonder aanslag (bestelmaat 1695 x 1950 -> rapport 1659 x 1914 = 18 mm per zijde), dus daar wordt niets extra afgetrokken.",
+    "systemen": {
+      "CERTIX 116": {
+        "flens_kaderartikels": ["101.331", "101.333"],
+        "flens_mm_per_zijde": 18,
+        "rapportmaten_zonder_flens": true
+      },
+      "CERTIX 82": {
+        "flens_kaderartikels": ["102.312", "102.332"],
+        "flens_mm_per_zijde": null,
+        "rapportmaten_zonder_flens": true
+      }
+    },
+    "standaard": {
+      "flens_trefwoorden": ["aanslag", "flens", "t-kader", "tkader"],
+      "flens_mm_per_zijde": null,
+      "rapportmaten_zonder_flens": false
+    }
+  },
+
+  "leveranciers": {
+    "_uitleg": "Welk merk (zoals in de RVO-meldcodelijst) hoort bij een systeem, voor glas en voor deuren. Daarmee kiest de verwerker de meldcode: voor glas de hoofdmeldcode van dat merk per categorie (triple / HR++), en - als de glassamenstelling exact overeenkomt - ook de specifieke productmeldcode. Voor deuren zoekt hij op merk + (optioneel) serie + Ud-waarde. Certix-glas = Oknoplast (hoofdmeldcode KA30682, zoals in de infomails).",
+    "systemen": {
+      "CERTIX 116": {"glas": "Oknoplast", "deur": null, "deur_serie": null},
+      "CERTIX 82": {"glas": "Oknoplast", "deur": null, "deur_serie": null}
+    },
+    "trefwoorden": {
+      "_uitleg": "Als het systeem niet in de lijst hierboven staat: merk afleiden uit de systeemnaam.",
+      "profel": {"glas": "Profel", "deur": "Profel"},
+      "p8000": {"glas": "Profel", "deur": "Profel", "deur_serie": "P8000"},
+      "p4000": {"glas": "Profel", "deur": "Profel", "deur_serie": "P4000"},
+      "p400": {"glas": "Profel", "deur": "Profel", "deur_serie": "P400 "},
+      "oknoplast": {"glas": "Oknoplast", "deur": null}
+    }
+  },
+
+  "meldcodes": {
+    "_uitleg": "Handmatige meldcodes, alleen gebruikt als de RVO-meldcodelijst (subsidie/data/meldcodelijst.json) geen passende code geeft. Een regel met 'u_waarde' matcht exact (± 0,005); met 'u_max' (en optioneel 'u_min') een bereik. 'systeem' = '*' geldt voor alle systemen.",
+    "regels": [
+      {"maatregel": "deur", "systeem": "CERTIX 116", "u_waarde": 0.97, "meldcode": "KA31763",
+       "bron": "infomail Bisheshar 2063 (isolerende achterdeur, Ud 0,97)"}
+    ]
+  },
+
+  "scenario_standaard": "enkel",
+
+  "productomschrijving": {
+    "triple_glas": "Isolerende PVC raamkozijnen met HR+++ triple glas",
+    "hr_plus_plus_glas": "Isolerende PVC raamkozijnen met HR++ glas",
+    "deur": "Isolerende PVC deurkozijn met triple glas",
+    "combinatie": "Isolerende PVC deur- en raamkozijnen met HR+++ triple glas"
+  },
+
+  "vestigingen": {
+    "BNNIM": {
+      "naam": "BeliNijmegen B.V.",
+      "weergavenaam": "Belisol Nijmegen",
+      "kvk": "22062177",
+      "adres": "Kerkenbos 1327-1329",
+      "postcode_plaats": "6546 BG Nijmegen",
+      "telefoon": "+31 (0)24 781 00 19",
+      "email": "subsidie.nijmegen@belisol.com",
+      "website": "www.belisol.nl"
+    },
+    "_standaard": {
+      "naam": "Belisol",
+      "weergavenaam": "Belisol",
+      "kvk": null,
+      "adres": "",
+      "postcode_plaats": "",
+      "telefoon": "",
+      "email": "",
+      "website": "www.belisol.nl"
+    }
+  },
+
+  "rvo_link": "https://www.rvo.nl/subsidies-financiering/isde/woningeigenaren"
+}

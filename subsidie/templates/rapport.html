@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Subsidie-overzicht {{ klant.naam }} {{ klant.huisnummer }}</title>
+<style>
+@font-face { font-family: "Nunito"; font-weight: 400; src: url("{{ assets }}/fonts/nunito-latin-400-normal.woff"); }
+@font-face { font-family: "Nunito"; font-weight: 600; src: url("{{ assets }}/fonts/nunito-latin-600-normal.woff"); }
+@font-face { font-family: "Nunito"; font-weight: 700; src: url("{{ assets }}/fonts/nunito-latin-700-normal.woff"); }
+@font-face { font-family: "Nunito"; font-weight: 800; src: url("{{ assets }}/fonts/nunito-latin-800-normal.woff"); }
+
+:root {
+  --navy: #00346B;
+  --blue: #155197;
+  --sky: #7CC4E8;
+  --sky-soft: #EAF5FB;
+  --ink: #1B2B3F;
+  --muted: #5E6E82;
+  --line: #D8E3EE;
+  --ok: #1F8A5B;
+  --warn: #B26A00;
+}
+
+@page {
+  size: A4;
+  margin: 18mm 16mm 22mm 16mm;
+  @bottom-left {
+    content: "{{ vestiging.weergavenaam }}  ·  {{ vestiging.adres }}, {{ vestiging.postcode_plaats }}  ·  {{ vestiging.telefoon }}  ·  {{ vestiging.email }}";
+    font-family: "Nunito"; font-size: 7.5pt; color: #5E6E82;
+  }
+  @bottom-right {
+    content: "Pagina " counter(page) " van " counter(pages);
+    font-family: "Nunito"; font-size: 7.5pt; color: #5E6E82;
+  }
+}
+@page :first { margin-top: 0; }
+
+* { box-sizing: border-box; }
+body { font-family: "Nunito", "DejaVu Sans", sans-serif; color: var(--ink); font-size: 9.6pt; line-height: 1.45; margin: 0; }
+h1, h2, h3 { margin: 0; color: var(--navy); }
+h2 { font-size: 13pt; font-weight: 800; margin: 0 0 3mm; }
+h2 .light { font-weight: 400; color: var(--blue); }
+p { margin: 0 0 2.5mm; }
+.muted { color: var(--muted); }
+
+/* ---------- header ---------- */
+.hero {
+  margin: 0 -16mm; padding: 10mm 16mm 8mm; background: var(--navy); color: #fff;
+  display: flex; align-items: center; gap: 8mm; position: relative;
+}
+.hero img { width: 26mm; height: 26mm; }
+.hero .t1 { font-size: 24pt; font-weight: 800; line-height: 1.05; color: #fff; }
+.hero .t2 { font-size: 11.5pt; color: var(--sky); margin-top: 1.5mm; }
+.hero .meta { margin-left: auto; text-align: right; font-size: 8.5pt; color: #CFE3F3; line-height: 1.6; }
+.hero .meta b { color: #fff; font-weight: 700; }
+.squares { position: absolute; right: 16mm; bottom: -7mm; width: 14mm; height: 14mm; border: 1.2pt solid var(--sky); }
+.squares::after { content: ""; position: absolute; left: -9mm; top: -5mm; width: 9mm; height: 9mm; border: 1.2pt solid #fff; }
+
+/* ---------- address row ---------- */
+.addr { display: flex; gap: 8mm; margin: 9mm 0 5mm; }
+.addr > div { flex: 1; }
+.label { font-size: 7.5pt; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; margin-bottom: 1mm; }
+.addr .name { font-size: 12pt; font-weight: 800; color: var(--navy); }
+
+/* ---------- KPI tiles ---------- */
+.kpis { display: flex; gap: 4mm; margin: 4mm 0 6mm; }
+.kpi { flex: 1; border: 1pt solid var(--line); border-radius: 3mm; padding: 4mm 4.5mm; }
+.kpi .v { font-size: 20pt; font-weight: 800; color: var(--navy); line-height: 1.1; }
+.kpi .v small { font-size: 10pt; font-weight: 700; color: var(--blue); }
+.kpi .k { font-size: 8pt; color: var(--muted); margin-top: 1mm; }
+.kpi.accent { background: var(--navy); border-color: var(--navy); }
+.kpi.accent .v, .kpi.accent .v small { color: #fff; }
+.kpi.accent .k { color: var(--sky); }
+
+/* ---------- measures (form data) ---------- */
+.measure { border: 1pt solid var(--line); border-left: 3.2mm solid var(--sky); border-radius: 2.5mm; margin-bottom: 4mm; page-break-inside: avoid; }
+.measure.door { border-left-color: var(--blue); }
+.measure .head { display: flex; align-items: baseline; padding: 3mm 4.5mm 2mm; border-bottom: 1pt solid var(--line); }
+.measure .head h3 { font-size: 11pt; font-weight: 800; }
+.measure .head .amt { margin-left: auto; font-weight: 800; color: var(--navy); font-size: 11pt; }
+.measure .head .amt small { font-weight: 600; color: var(--muted); font-size: 8pt; }
+.fields { display: flex; flex-wrap: wrap; padding: 2.5mm 4.5mm 3mm; }
+.field { width: 25%; padding: 1mm 2mm 1mm 0; }
+.field .v { font-size: 11.5pt; font-weight: 800; color: var(--ink); }
+.field .v.code { font-family: "DejaVu Sans Mono", monospace; font-size: 10.5pt; letter-spacing: .03em; color: var(--blue); }
+.note { font-size: 8pt; color: var(--muted); padding: 0 4.5mm 3mm; }
+
+.general { background: var(--sky-soft); border-radius: 2.5mm; padding: 4mm 4.5mm; display: flex; flex-wrap: wrap; margin-bottom: 4mm; page-break-inside: avoid; }
+.general .field { width: 50%; }
+.general .field.full { width: 100%; }
+.general .field .v { font-size: 10.5pt; }
+
+/* ---------- table ---------- */
+table { width: 100%; border-collapse: collapse; font-size: 8.6pt; }
+th { text-align: left; font-size: 7.3pt; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; padding: 2mm 1.5mm; border-bottom: 1.2pt solid var(--navy); }
+td { padding: 1.3mm 1.5mm; border-bottom: 1pt solid var(--line); vertical-align: middle; }
+td.num, th.num { text-align: right; white-space: nowrap; }
+td img { width: 14mm; height: 10mm; object-fit: contain; object-position: center; display: block; }
+tr { page-break-inside: avoid; }
+.pill { display: inline-block; padding: .4mm 2.2mm; border-radius: 10mm; font-size: 7.5pt; font-weight: 700; white-space: nowrap; }
+.pill.glas { background: var(--sky-soft); color: var(--blue); }
+.pill.deur { background: #E3ECF7; color: var(--navy); }
+.pill.nee { background: #FBEFE0; color: var(--warn); }
+tfoot td { font-weight: 800; color: var(--navy); border-bottom: none; border-top: 1.2pt solid var(--navy); }
+
+/* ---------- steps ---------- */
+.two { display: flex; gap: 6mm; }
+.two > div { flex: 1; }
+.steps { counter-reset: s; margin: 0; padding: 0; list-style: none; }
+.steps li { position: relative; padding: 0 0 2mm 9mm; }
+.steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 0; top: -.2mm; width: 6mm; height: 6mm; border-radius: 50%; background: var(--navy); color: #fff; font-weight: 800; font-size: 8pt; text-align: center; line-height: 6mm; }
+.steps b { color: var(--navy); }
+.check { list-style: none; margin: 0; padding: 0; }
+.check li { padding: 0 0 1.1mm 6mm; position: relative; }
+.check li::before { content: "✓"; position: absolute; left: 0; color: var(--sky); font-weight: 800; }
+
+.declaration { border: 1.2pt solid var(--navy); border-radius: 2.5mm; padding: 4mm 5mm; margin: 5mm 0; page-break-inside: avoid; }
+.declaration h2 { font-size: 11.5pt; }
+.sign { display: flex; gap: 10mm; margin-top: 7mm; }
+.sign > div { flex: 1; border-top: 1pt solid var(--ink); padding-top: 1.5mm; font-size: 8pt; color: var(--muted); }
+
+.disclaimer { font-size: 7.3pt; color: var(--muted); border-top: 1pt solid var(--line); padding-top: 2.5mm; margin-top: 4mm; }
+.pb { page-break-before: always; }
+table.rb td { vertical-align: top; padding: 2mm 1.5mm; }
+table.rb th.hl, table.rb td.hl { background: var(--sky-soft); }
+table.rb tr.grand td { font-size: 11pt; padding: 3mm 1.5mm; }
+table.rb tr.grand td.hl { background: var(--navy); color: #fff; }
+.scen { display: flex; gap: 4mm; margin: 3mm 0 2mm; font-size: 8pt; color: var(--muted); }
+.scen > div { flex: 1; border-top: 2pt solid var(--sky); padding-top: 1.5mm; }
+.scen b { color: var(--navy); }
+h2.section { margin-top: 7mm; }
+.section { margin-top: 5mm; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PAGINA 1 ============================ -->
+<div class="hero">
+  <img src="{{ assets }}/belisol_logo.png" alt="Belisol">
+  <div>
+    <div class="t1">Subsidie-overzicht</div>
+    <div class="t2">ISDE — isolerend glas{% if heeft_deur %} en isolerende deur{% endif %}</div>
+  </div>
+  <div class="meta">
+    Datum <b>{{ vandaag }}</b><br>
+    Ordernummer <b>{{ bron.ordernummer }}</b><br>
+    Referentie <b>{{ klant.naam }} {{ klant.huisnummer }}</b>
+  </div>
+  <div class="squares"></div>
+</div>
+
+<div class="addr">
+  <div>
+    <div class="label">Voor</div>
+    <div class="name">{{ klant.naam }}</div>
+    {% if klant.straat %}{{ klant.straat }} {{ klant.huisnummer }}<br>{% endif %}
+    {% if klant.postcode or klant.plaats %}{{ klant.postcode or "" }} {{ klant.plaats or "" }}{% endif %}
+  </div>
+  <div>
+    <div class="label">Uitgevoerd door</div>
+    <div class="name">{{ vestiging.naam }}</div>
+    {{ vestiging.adres }}<br>{{ vestiging.postcode_plaats }}
+  </div>
+</div>
+
+<p>{{ klant.aanhef }},</p>
+<p>Bedankt dat u voor Belisol heeft gekozen. Uw nieuwe kozijnen{% if heeft_deur %} en deur{% endif %} komen in aanmerking voor de
+Investeringssubsidie duurzame energie en energiebesparing (ISDE). Hieronder vindt u alle gegevens die u in het aanvraagformulier
+van RVO nodig heeft — u kunt ze één op één overnemen.</p>
+
+<div class="kpis">
+  <div class="kpi"><div class="v">{{ nl(totaal.m2) }} <small>m²</small></div><div class="k">Geïsoleerd oppervlak (netto, excl. flens)</div></div>
+  <div class="kpi {% if totaal.scenario == 'enkel' %}accent{% endif %}"><div class="v">{{ eurr(rb.enkel) }}</div><div class="k">Richtbedrag bij één maatregel*</div></div>
+  <div class="kpi {% if totaal.scenario != 'enkel' %}accent{% endif %}"><div class="v">{{ eurr(rb.meerdere) }}</div><div class="k">Richtbedrag bij meerdere maatregelen*</div></div>
+</div>
+
+<h2>Gegevens voor uw aanvraag <span class="light">— stap 2 van het RVO-formulier</span></h2>
+
+<div class="general">
+  <div class="field"><div class="label">KVK-nummer uitvoerend bedrijf</div><div class="v">{{ vestiging.kvk or "–" }}</div></div>
+  <div class="field"><div class="label">Datum van montage</div><div class="v">{{ datum_nl(klant.uitvoeringsdatum) if klant.uitvoeringsdatum else "Zie uw opleverbon" }}</div></div>
+  <div class="field full"><div class="label">Productomschrijving</div><div class="v">{{ productomschrijving }}</div></div>
+</div>
+
+{% for m in maatregelen %}
+<div class="measure {% if m.code.startswith('deur') %}door{% endif %}">
+  <div class="head">
+    <h3>{{ m.label }}</h3>
+    <div class="amt">{{ eur0(m.bedragen.enkel.totaal) }}{% if m.bedragen.meerdere.totaal %} <small>tot</small> {{ eur0(m.bedragen.meerdere.totaal) }}{% endif %}</div>
+  </div>
+  <div class="fields">
+    <div class="field"><div class="label">Netto oppervlakte</div><div class="v">{{ nl(m.m2) }} m²</div></div>
+    <div class="field"><div class="label">U-waarde ({{ m.u_label }})</div><div class="v">{{ nl(m.u_waarde) }} W/m²K</div></div>
+    <div class="field"><div class="label">Meldcode</div><div class="v code">{{ m.meldcode or "Overige" }}</div>{% if m.meldcode_product %}<div class="muted" style="font-size:7pt;line-height:1.2">{{ m.meldcode_product|replace("(H) ","") }}</div>{% endif %}</div>
+    <div class="field"><div class="label">Elementen</div><div class="v">{{ m.posities|length }} <span class="muted" style="font-size:8pt;font-weight:600">(pos. {{ m.posities|join(", ") }})</span></div></div>
+  </div>
+  {% if m.verklaring_bouwbedrijf_nodig %}<div class="note">Hoge isolatiewaarde: voeg de ondertekende verklaring van het uitvoerend bedrijf (zie verderop) toe aan uw aanvraag.</div>{% endif %}
+</div>
+{% endfor %}
+
+<!-- ============================ PAGINA 2 ============================ -->
+<div class="pb"></div>
+<h2>Richtbedragen <span class="light">— wat kunt u verwachten?</span></h2>
+<p class="muted" style="font-size:8.5pt">Het bedrag per m² hangt af van uw situatie. Glas, isolerende panelen en isolerende deuren samen tellen als één maatregel (glasisolatie).
+Bedragen volgens de RVO-meldcodelijst{% if meldcodelijst.bron %} ({{ meldcodelijst.bron|replace(".xlsx","")|replace("Meldcodelijst Hoogrendementsglas - ","") }}){% endif %}; de oppervlakte wordt per maatregel afgerond op hele m².</p>
+<table class="rb">
+  <thead>
+    <tr>
+      <th>Maatregel</th><th class="num">m²</th>
+      <th class="num {% if totaal.scenario == 'enkel' %}hl{% endif %}">Eén maatregel</th>
+      <th class="num {% if totaal.scenario == 'meerdere' %}hl{% endif %}">Meerdere maatregelen</th>
+      <th class="num {% if totaal.scenario == 'monument' %}hl{% endif %}">Monumentale woning</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for m in maatregelen %}
+    <tr>
+      <td><b>{{ m.label }}</b><br><span class="muted" style="font-size:7.5pt">meldcode {{ m.meldcode or "Overige" }}</span></td>
+      <td class="num">{{ m.m2_voor_bedrag }}</td>
+      {% for sc in ["enkel", "meerdere", "monument"] %}
+        {% set b = m.bedragen[sc] %}
+        <td class="num {% if totaal.scenario == sc %}hl{% endif %}">
+          {% if b.totaal is not none %}<b>{{ eur0(b.totaal) }}</b><br><span class="muted" style="font-size:7.5pt">{{ eur0(b.per_m2) }}/m²{% if b.gelijk_aan_meerdere %} ¹{% endif %}</span>{% else %}–{% endif %}
+        </td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr class="grand">
+      <td>Totale te verwachten subsidie</td><td class="num">{{ totaal.m2_voor_bedrag }}</td>
+      {% for sc in ["enkel", "meerdere", "monument"] %}
+        <td class="num {% if totaal.scenario == sc %}hl{% endif %}">{{ eurr(rb[sc]) }}</td>
+      {% endfor %}
+    </tr>
+  </tfoot>
+</table>
+<div class="scen">
+  <div><b>Eén maatregel</b> — u laat alleen glas, panelen en/of deuren isoleren.</div>
+  <div><b>Meerdere maatregelen</b> — u voert binnen 24 maanden nog een maatregel uit, zoals dak-, vloer-, gevel- of bodemisolatie, een warmtepomp, zonneboiler of aansluiting op een warmtenet. Het bedrag per m² verdubbelt.</div>
+  <div><b>Monumentale woning</b> — voor woningen met een monumentenstatus gelden aparte bedragen.{% if maatregelen|selectattr("bedragen.monument.gelijk_aan_meerdere")|list %} ¹ Geen apart monumentbedrag voor deze categorie: het bedrag bij meerdere maatregelen is getoond.{% endif %}</div>
+</div>
+
+<h2 class="section">Overzicht per element</h2>
+<p class="muted" style="font-size:8.5pt">Waarden uit het thermisch rapport van de fabrikant. Netto maten: de flens (aanslag) telt niet mee.</p>
+<table>
+  <thead>
+    <tr>
+      <th></th><th>Pos.</th><th>Omschrijving</th><th class="num">B × H netto (mm)</th><th class="num">m²</th>
+      <th class="num">Ug</th><th class="num">Uw</th><th>Maatregel</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for p in posities %}
+    <tr>
+      <td>{% if p.tekening %}<img src="data:image/png;base64,{{ p.tekening }}">{% endif %}</td>
+      <td><b>{{ p.positie }}</b>{% if p.stuks > 1 %} <span class="muted">({{ p.stuks }}×)</span>{% endif %}</td>
+      <td>{{ p.omschrijving or "–" }}<br><span class="muted" style="font-size:7.6pt">{{ p.systeem }} · {{ "deur" if p.type == "deur" else "raam/kozijn" }}</span></td>
+      <td class="num">{{ nl(p.flens.netto_breedte_mm, 0) }} × {{ nl(p.flens.netto_hoogte_mm, 0) }}</td>
+      <td class="num"><b>{{ nl(p.oppervlakte_m2) }}</b></td>
+      <td class="num">{{ nl(p.ug) }}</td>
+      <td class="num">{{ nl(p.uw) }}</td>
+      <td>
+        {% if p.in_aanmerking %}
+          <span class="pill {{ 'deur' if p.type == 'deur' else 'glas' }}">{{ korte_label[p.categorie] }}</span>
+        {% else %}
+          <span class="pill nee">Niet subsidiabel</span>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr><td></td><td colspan="3">Totaal in aanmerking</td><td class="num">{{ nl(totaal.m2) }}</td><td colspan="3"></td></tr>
+  </tfoot>
+</table>
+
+<div class="pb"></div>
+{% if verklaring %}
+<div class="declaration" style="margin-top:0">
+  <h2>Verklaring uitvoerend bedrijf</h2>
+  <p>Ondergetekende, namens <b>{{ vestiging.naam }}</b> (KVK {{ vestiging.kvk or "–" }}), verklaart dat bij
+  {{ klant.naam }}{% if klant.straat %}, {{ klant.straat }} {{ klant.huisnummer }}{% if klant.plaats %} te {{ klant.plaats }}{% endif %}{% endif %}
+  de volgende isolatiemaatregel(en) met hoge isolatiewaarde {{ "zijn" if verklaring|length > 1 else "is" }} geplaatst:</p>
+  <ul class="check">
+    {% for m in verklaring %}<li>{{ m.label }}: {{ nl(m.m2) }} m², {{ m.u_label }} = {{ nl(m.u_waarde) }} W/m²K (positie {{ m.posities|join(", ") }}), in combinatie met {{ "triple" if heeft_triple else "HR++" }} glas.</li>{% endfor %}
+  </ul>
+  <div class="sign">
+    <div>Naam en functie</div>
+    <div>Datum</div>
+    <div>Handtekening</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="section two">
+  <div>
+    <h2>Zo vraagt u aan</h2>
+    <ol class="steps">
+      <li><b>Na de montage</b> — ga naar rvo.nl/isde (woningeigenaren) en log in met DigiD. U heeft tot 24 maanden na montage de tijd.</li>
+      <li><b>Vul uw gegevens in</b> en kies glas-, kozijnpaneel- of deurisolatie. Neem de gegevens van pagina 1 over.</li>
+      <li><b>Upload uw bewijsstukken</b>: factuur, betaalbewijs en foto's.</li>
+      <li><b>Controleer en verstuur.</b> RVO beslist doorgaans binnen 8 weken.</li>
+    </ol>
+  </div>
+  <div>
+    <h2>Checklist bewijsstukken</h2>
+    <ul class="check">
+      <li>DigiD (app of sms-controle)</li>
+      <li>Facturen van Belisol, <b>samengevoegd tot één document</b></li>
+      <li>Betaalbewijs (bankafschrift of factuur met betaalverklaring)</li>
+      <li>Foto's van de situatie vóór en na de montage</li>
+      <li>Foto van het glas/de deur met zichtbaar merk en coderingsetiket</li>
+      <li>Dit subsidie-overzicht{% if verklaring %} incl. ondertekende verklaring{% endif %}</li>
+    </ul>
+  </div>
+</div>
+
+<div class="disclaimer">
+  * Richtbedragen zijn een indicatie op basis van de RVO-meldcodelijst en de tarieven {{ "vanaf 1 januari 2025" if totaal.tarieftabel == "vanaf_2025" else "tot en met 31 december 2024" }}
+  (oppervlakte afgerond op hele m²; ≥ 0,50 naar boven). Aan deze bedragen kunnen geen rechten worden ontleend; RVO stelt het definitieve bedrag vast en de datum van montage is leidend.
+  Minimaal {{ nl(totaal.minimum_m2, 0) }} m², maximaal {{ nl(totaal.maximum_m2, 0) }} m² per aanvraag.
+  Meer info: {{ rvo_link }} · Vragen? Uw Belisol-adviseur helpt u graag: {{ vestiging.telefoon }} · {{ vestiging.email }}
+</div>
+
+</body>
+</html>
