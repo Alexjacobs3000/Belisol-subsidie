@@ -4,3 +4,4 @@ libharfbuzz0b
 libharfbuzz-subset0
 libfontconfig1
 fonts-dejavu-core
+tesseract-ocr

@@ -169,7 +169,7 @@ except ValueError as e:
     st.error(f"Het Uw-rapport kon niet gelezen worden: {e}")
     st.stop()
 
-# Certix: het Uw-rapport toont altijd de binnenmaat (zonder flens) -> bestelling controleren is niet nodig
+# Certix: de maat zonder aanslag staat in de schets van het Uw-rapport (zwarte maat) -> bestelling controleren is niet nodig
 is_certix = bool(report.posities) and all(p.systeem.upper().startswith("CERTIX") for p in report.posities)
 
 if not f_best and not is_certix:
@@ -192,9 +192,9 @@ rapport_flens = any(
 
 # ---------------------------------------------------------------- 2. controle bestelling (niet bij Certix)
 if is_certix:
-    # flens volgt het rapport; Certix-maten zijn al zonder flens, dus er wordt niets extra afgetrokken
+    # flens volgt het rapport; de maat zonder aanslag wordt uit de schets gelezen (zwarte maat)
     flens_bevestigd, flens_mm = None, None
-    st.caption(f"Certix-rapport (order `{report.ordernummer}`, {len(report.posities)} posities): het Uw-rapport toont de binnenmaat zonder flens — controle van de bestelling is niet nodig.")
+    st.caption(f"Certix-rapport (order `{report.ordernummer}`, {len(report.posities)} posities): de maat zonder aanslag wordt uit de tekening gelezen (zwarte maat) — controle van de bestelling is niet nodig.")
 else:
     step("Bestelling controleren")
     b1, b2 = st.columns([3, 2])
@@ -286,6 +286,7 @@ with st.expander("Detail per positie"):
     st.dataframe(
         [{"Pos.": p["positie"], "Omschrijving": p["omschrijving"], "Type": p["type"],
           "B × H netto": f"{nl(p['flens']['netto_breedte_mm'], 0)} × {nl(p['flens']['netto_hoogte_mm'], 0)}",
+          "Maat uit": p["flens"].get("maat_bron", "tabel"),
           "m²": nl(p["oppervlakte_m2"]), "Ug": nl(p["ug"]), "Uw": nl(p["uw"]),
           "Flens": p["flens"]["toegepast"], "Maatregel": p["categorie"] or "niet subsidiabel"}
          for p in result["posities"]], hide_index=True, use_container_width=True)

@@ -10,7 +10,7 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
 ## Opbouw
 - `streamlit_app.py` — webapp (Streamlit Cloud). Gebruiker uploadt **bestelling** (definitieve opmeting, vaak
   handgeschreven scan) én **Uw-rapport**; bevestigt flens; vult klantgegevens in; downloadt PDF (+ JSON).
-  Bij Certix vervalt stap 2 (bestelling controleren) en is de bestelling optioneel: rapport = altijd binnenmaat.
+  Bij Certix vervalt stap 2 (bestelling controleren) en is de bestelling optioneel (maat komt uit de tekening).
 - `api.py` (FastAPI) / `verwerk.py` (CLI) — zelfde verwerking voor n8n/Zapier.
 - `subsidie/parser.py` — PDF → posities (afmetingen, Uw/Uf/Ug, panelen, glas, kozijnschets).
 - `subsidie/rules.py` — subsidieregels, flens, meldcodes, bedragen, waarschuwingen.
@@ -34,8 +34,10 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
 - Deur: Ud ≤ 1,0 (€111 / €222), ≤ 1,5 (€25 / €50 / €92). Alleen samen met HR++/triple glas.
 - Monumentkolom = "meerdere maatregelen in monument". Geen monumentbedrag in lijst (triple, deur hoog) →
   bedrag meerdere maatregelen getoond met voetnoot (AANNAME, nog te bevestigen).
-- Certix 116: kader 101.331/101.333 = aanslag, 18 mm/zijde; het Certix Uw-rapport geeft maten al zónder flens
-  (bestelling 1695×1950 → rapport 1659×1914) → geen extra aftrek. Deurvleugel 103.446 = deur.
+- Certix maatvoering: in de schets van het Uw-rapport is de **zwarte** maat (dichtst bij het element) = zonder
+  aanslag, **groen** = met aanslag. Altijd de zwarte totaalmaat gebruiken (breedte én hoogte), niet de tabel.
+  Wordt gelezen met OCR (`subsidie/tekening.py`, Tesseract; `config.json → flens → maat_uit_tekening`);
+  onleesbaar/onplausibel → tabelmaat + waarschuwing. Kader 101.331/101.333 = aanslag. Deurvleugel 103.446 = deur.
 - Referentie in rapport: `C26 <vestigingscode> <klantnaam> <huisnummer>`; BNNIM = BeliNijmegen B.V., KVK 22062177.
 
 ## Open punten

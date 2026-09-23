@@ -17,6 +17,9 @@ from typing import Optional
 
 import numpy as np
 import pdfplumber
+from PIL import Image
+
+from .tekening import lees_zwarte_maten
 
 NUM = r"(\d+(?:[.,]\d+)?)"
 
@@ -58,6 +61,9 @@ class Position:
     materialen: dict = field(default_factory=dict)
     glas: list = field(default_factory=list)
     tekening_png_b64: Optional[str] = None
+    # zwarte maat bij de schets = maat zonder aanslag (OCR; None = niet betrouwbaar leesbaar)
+    tekening_breedte_mm: Optional[float] = None
+    tekening_hoogte_mm: Optional[float] = None
 
     @property
     def vleugel_artikels(self) -> list[str]:
@@ -229,9 +235,25 @@ def crop_sketch(im):
     return im.crop((max(x0-pad,0),max(y0-pad,0),min(x1+pad,W),min(y1+pad,H)))
 
 
-def _extract_drawings(pdf: pdfplumber.PDF, n_pos: int, resolution: int = 400) -> dict[int, str]:
-    """Rendert de positietekening (links in elk positieblok) als PNG base64."""
-    drawings: dict[int, str] = {}
+def _raw_image(page, im) -> Optional[Image.Image]:
+    """De ingesloten afbeelding op volle resolutie (voor OCR); anders een render op die resolutie."""
+    try:
+        w, h = im["srcsize"]
+        data = im["stream"].get_data()
+        if len(data) == w * h * 3:
+            return Image.frombytes("RGB", (w, h), data)
+        return Image.open(io.BytesIO(im["stream"].get_rawdata())).convert("RGB")
+    except Exception:
+        try:
+            res = int(72 * im["srcsize"][0] / (im["x1"] - im["x0"]))
+            return page.crop((im["x0"], im["top"], im["x1"], im["bottom"])).to_image(resolution=res).original.convert("RGB")
+        except Exception:
+            return None
+
+
+def _extract_drawings(pdf: pdfplumber.PDF, n_pos: int, resolution: int = 400) -> dict[int, tuple[str, Optional[Image.Image]]]:
+    """Rendert de positietekening (links in elk positieblok) als PNG base64, plus de originele afbeelding."""
+    drawings: dict[int, tuple[str, Optional[Image.Image]]] = {}
     counter = 0
     for page in pdf.pages:
         headers = sorted(w["top"] for w in page.extract_words() if w["text"] == "Pos.")
@@ -253,7 +275,7 @@ def _extract_drawings(pdf: pdfplumber.PDF, n_pos: int, resolution: int = 400) ->
             if sketch.size[0] > 30 and sketch.size[1] > 30:
                 img = sketch
             img.save(buf, format="PNG", optimize=True)
-            drawings[counter] = base64.b64encode(buf.getvalue()).decode()
+            drawings[counter] = (base64.b64encode(buf.getvalue()).decode(), _raw_image(page, im))
     return drawings
 
 
@@ -273,7 +295,9 @@ def parse_uw_rapport(pdf: pdfplumber.PDF, text: str) -> Report:
 
     drawings = _extract_drawings(pdf, len(posities))
     for idx, p in enumerate(posities, start=1):
-        p.tekening_png_b64 = drawings.get(idx)
+        png, raw = drawings.get(idx, (None, None))
+        p.tekening_png_b64 = png
+        p.tekening_breedte_mm, p.tekening_hoogte_mm = lees_zwarte_maten(raw, p.breedte_mm, p.hoogte_mm)
 
     reference = ref.group(1).strip() if ref else None
     return Report(
