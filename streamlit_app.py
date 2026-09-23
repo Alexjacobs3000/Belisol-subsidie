@@ -63,8 +63,13 @@ if not check_password():
     st.stop()
 
 
-def step(nr: int, titel: str):
-    st.markdown(f"<h3><span class='stepnr'>{nr}</span>{titel}</h3>", unsafe_allow_html=True)
+_stapnr = 0
+
+
+def step(titel: str):
+    global _stapnr
+    _stapnr += 1
+    st.markdown(f"<h3><span class='stepnr'>{_stapnr}</span>{titel}</h3>", unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------- kop
@@ -73,7 +78,7 @@ with c1:
     st.image(str(ASSETS / "belisol_logo.png"), width=80)
 with c2:
     st.title("Subsidie-overzicht ISDE")
-    st.markdown("<span class='muted'>Upload de bestelling en het Uw-rapport van de leverancier. "
+    st.markdown("<span class='muted'>Upload het Uw-rapport van de leverancier en (behalve bij Certix) de bestelling. "
                 "De app berekent de subsidiegegevens en maakt het overzicht voor de klant.</span>", unsafe_allow_html=True)
 
 with st.sidebar:
@@ -86,15 +91,15 @@ with st.sidebar:
     st.caption("Bestanden worden alleen tijdens deze sessie verwerkt en niet opgeslagen.")
 
 # ---------------------------------------------------------------- 1. uploads
-step(1, "Documenten uploaden")
+step("Documenten uploaden")
 u1, u2 = st.columns(2)
 with u1:
-    f_best = st.file_uploader("Bestelling / definitieve opmeting (PDF)", type=["pdf"], key="best")
+    f_best = st.file_uploader("Bestelling / definitieve opmeting (PDF) — niet nodig bij Certix", type=["pdf"], key="best")
 with u2:
     f_uw = st.file_uploader("Uw-rapport / thermisch rapport leverancier (PDF)", type=["pdf"], key="uw")
 
-if not (f_best and f_uw):
-    st.info("Upload **beide** documenten om verder te gaan.")
+if not f_uw:
+    st.info("Upload het **Uw-rapport** (en, behalve bij Certix, de bestelling) om verder te gaan.")
     st.stop()
 
 
@@ -115,10 +120,17 @@ except ValueError as e:
     st.error(f"Het Uw-rapport kon niet gelezen worden: {e}")
     st.stop()
 
-best = _bestelling(f_best.getvalue())
+# Certix: het Uw-rapport toont altijd de binnenmaat (zonder flens) -> bestelling controleren is niet nodig
+is_certix = bool(report.posities) and all(p.systeem.upper().startswith("CERTIX") for p in report.posities)
+
+if not f_best and not is_certix:
+    st.info("Dit is geen Certix-rapport: upload ook de **bestelling** om de flens te controleren.")
+    st.stop()
+
+best = _bestelling(f_best.getvalue()) if f_best else {"afbeeldingen": [], "gescand": False, "velden": {}}
 
 # nieuwe bestanden -> oud resultaat weggooien
-sig = (f_uw.name, f_uw.size, f_best.name, f_best.size)
+sig = (f_uw.name, f_uw.size, f_best.name if f_best else None, f_best.size if f_best else None)
 if st.session_state.get("sig") != sig:
     st.session_state["sig"] = sig
     st.session_state.pop("result", None)
@@ -128,42 +140,45 @@ rapport_flens = any(
     any(k.split()[0] in ("101.331", "101.333") or "aanslag" in k.lower() for k in p.materialen.get("KADER", []))
     for p in report.posities)
 
-# ---------------------------------------------------------------- 2. controle bestelling
-step(2, "Bestelling controleren")
-b1, b2 = st.columns([3, 2])
-with b1:
-    if best["afbeeldingen"]:
-        tabs = st.tabs([f"Pagina {i+1}" for i in range(len(best["afbeeldingen"]))])
-        for t, img in zip(tabs, best["afbeeldingen"]):
-            with t:
-                st.image(img, use_container_width=True)
-with b2:
-    st.markdown(f"**Uw-rapport**: order `{report.ordernummer}` · referentie `{report.referentie}`")
-    st.markdown(f"Systeem: **{', '.join(sorted({p.systeem for p in report.posities}))}** · {len(report.posities)} posities")
-    if best["gescand"]:
-        st.caption("De bestelling is een scan: controleer de gegevens hieronder visueel.")
-    elif best["velden"]:
-        st.caption("Herkend in de bestelling: " + ", ".join(f"{k}: {v}" for k, v in best["velden"].items()))
+# ---------------------------------------------------------------- 2. controle bestelling (niet bij Certix)
+if is_certix:
+    # flens volgt het rapport; Certix-maten zijn al zonder flens, dus er wordt niets extra afgetrokken
+    flens_bevestigd, flens_mm = None, None
+    st.caption(f"Certix-rapport (order `{report.ordernummer}`, {len(report.posities)} posities): het Uw-rapport toont de binnenmaat zonder flens — controle van de bestelling is niet nodig.")
+else:
+    step("Bestelling controleren")
+    b1, b2 = st.columns([3, 2])
+    with b1:
+        if best["afbeeldingen"]:
+            tabs = st.tabs([f"Pagina {i+1}" for i in range(len(best["afbeeldingen"]))])
+            for t, img in zip(tabs, best["afbeeldingen"]):
+                with t:
+                    st.image(img, use_container_width=True)
+    with b2:
+        st.markdown(f"**Uw-rapport**: order `{report.ordernummer}` · referentie `{report.referentie}`")
+        st.markdown(f"Systeem: **{', '.join(sorted({p.systeem for p in report.posities}))}** · {len(report.posities)} posities")
+        if best["gescand"]:
+            st.caption("De bestelling is een scan: controleer de gegevens hieronder visueel.")
+        elif best["velden"]:
+            st.caption("Herkend in de bestelling: " + ", ".join(f"{k}: {v}" for k, v in best["velden"].items()))
 
-    st.markdown("**Flens / aanslag / T-kader**")
-    st.caption("In Nederland telt de flens niet mee en wordt aan alle zijden van de maat afgetrokken. "
-               "Kijk op de bestelling of 'aanslag' (flens) is aangeduid.")
-    keuze = st.radio(
-        "Staat er op de bestelling een flens (aanslag) aangeduid?",
-        ["Ja", "Nee"], index=0 if rapport_flens else 1, horizontal=True,
-        help=f"Volgens het Uw-rapport: {'ja (kaderprofiel met aanslag)' if rapport_flens else 'nee'}.")
-    flens_bevestigd = keuze == "Ja"
-    if flens_bevestigd != rapport_flens:
-        st.warning("Dit wijkt af van het kaderprofiel in het Uw-rapport. De keuze van de bestelling wordt gevolgd.")
-    flens_mm = None
-    if flens_bevestigd and not all(p.systeem.upper().startswith("CERTIX") for p in report.posities):
-        flens_mm = st.number_input("Flensbreedte per zijde (mm)", min_value=0.0, max_value=100.0, value=0.0, step=1.0,
-                                   help="Alleen nodig als het leveranciersrapport de maten mét flens geeft.") or None
-    else:
-        st.caption("Certix: het Uw-rapport geeft de maten al zonder flens (18 mm per zijde) — er wordt niets dubbel afgetrokken.")
+        st.markdown("**Flens / aanslag / T-kader**")
+        st.caption("In Nederland telt de flens niet mee en wordt aan alle zijden van de maat afgetrokken. "
+                   "Kijk op de bestelling of 'aanslag' (flens) is aangeduid.")
+        keuze = st.radio(
+            "Staat er op de bestelling een flens (aanslag) aangeduid?",
+            ["Ja", "Nee"], index=0 if rapport_flens else 1, horizontal=True,
+            help=f"Volgens het Uw-rapport: {'ja (kaderprofiel met aanslag)' if rapport_flens else 'nee'}.")
+        flens_bevestigd = keuze == "Ja"
+        if flens_bevestigd != rapport_flens:
+            st.warning("Dit wijkt af van het kaderprofiel in het Uw-rapport. De keuze van de bestelling wordt gevolgd.")
+        flens_mm = None
+        if flens_bevestigd:
+            flens_mm = st.number_input("Flensbreedte per zijde (mm)", min_value=0.0, max_value=100.0, value=0.0, step=1.0,
+                                       help="Alleen nodig als het leveranciersrapport de maten mét flens geeft.") or None
 
 # ---------------------------------------------------------------- 3. klantgegevens
-step(3, "Klantgegevens")
+step("Klantgegevens")
 with st.form("klant"):
     k1, k2, k3 = st.columns(3)
     naam = k1.text_input("Naam klant", value=best["velden"].get("naam") or report.klantnaam or "")
@@ -192,7 +207,7 @@ if ok:
 result, pdf = st.session_state["result"], st.session_state["pdf"]
 
 # ---------------------------------------------------------------- 4. resultaat
-step(4, "Resultaat")
+step("Resultaat")
 rb = result["totaal"]["richtbedragen"]
 m1, m2, m3, m4 = st.columns(4)
 m1.metric("Geïsoleerd oppervlak", f"{nl(result['totaal']['m2'])} m²")
