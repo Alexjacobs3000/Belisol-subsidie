@@ -8,7 +8,7 @@ from typing import Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .parser import Report
-from .rules import nl, eur
+from .rules import nl, eur, load_config
 
 HERE = Path(__file__).parent
 MAANDEN = ["januari", "februari", "maart", "april", "mei", "juni", "juli",
@@ -51,7 +51,8 @@ def render_html(result: dict, report: Report) -> str:
         vandaag=datum_nl(date.today().isoformat()),
         heeft_deur=any(c.startswith("deur") for c in codes),
         heeft_triple="triple_glas" in codes,
-        verklaring=[m for m in result["maatregelen"] if m["verklaring_bouwbedrijf_nodig"]],
+        verklaring=[m for m in result["maatregelen"] if m["verklaring_bouwbedrijf_nodig"]]
+        if load_config().get("rapport", {}).get("verklaring_uitvoerend_bedrijf_tonen") else [],
         korte_label=KORT,
         nl=nl, eur=eur, eur0=eur0, eurr=eurr, datum_nl=datum_nl,
         rb=result["totaal"]["richtbedragen"],

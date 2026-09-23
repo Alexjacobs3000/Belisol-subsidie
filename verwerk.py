@@ -3,7 +3,7 @@
 Commandline-gebruik:
 
   python verwerk.py rapport.pdf --naam "Bisheshar" --straat Saltshof --plaats Wijchen \
-      --uitvoeringsdatum 2026-06-15 --json uit.json --pdf subsidie.pdf
+      --json uit.json --pdf subsidie.pdf
 
 Geeft JSON op stdout (of in --json) en maakt optioneel het klant-PDF.
 """
@@ -20,14 +20,14 @@ from subsidie.report import render_pdf
 def main():
     ap = argparse.ArgumentParser(description="Belisol ISDE-subsidieverwerker")
     ap.add_argument("rapport", help="Thermisch Uw-rapport (PDF) van de leverancier")
-    for f in ["naam", "aanhef", "straat", "huisnummer", "postcode", "plaats", "email", "uitvoeringsdatum", "scenario"]:
+    for f in ["naam", "aanhef", "straat", "huisnummer", "postcode", "plaats", "email"]:
         ap.add_argument(f"--{f}")
     ap.add_argument("--json", help="Schrijf JSON-resultaat naar dit bestand")
     ap.add_argument("--pdf", help="Schrijf klantrapport (PDF) naar dit bestand")
     a = ap.parse_args()
 
     report = parse_report(a.rapport)
-    klant = {k: getattr(a, k) for k in ["naam", "aanhef", "straat", "huisnummer", "postcode", "plaats", "email", "uitvoeringsdatum", "scenario"] if getattr(a, k)}
+    klant = {k: getattr(a, k) for k in ["naam", "aanhef", "straat", "huisnummer", "postcode", "plaats", "email"] if getattr(a, k)}
     result = evaluate(report, klant)
     out = json.dumps(result, indent=2, ensure_ascii=False)
     if a.json:

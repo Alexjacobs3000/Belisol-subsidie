@@ -217,25 +217,10 @@ def evaluate(report: Report, klant: Optional[dict] = None, cfg: Optional[dict] =
     g = cfg["grenswaarden"]
     warnings: list[str] = []
 
-    # ---- datum / tarieftabel -------------------------------------------
-    uitv = klant.get("uitvoeringsdatum")
-    uitv_d: Optional[date] = None
-    if uitv:
-        try:
-            uitv_d = date.fromisoformat(str(uitv)[:10])
-        except ValueError:
-            warnings.append(f"Uitvoeringsdatum '{uitv}' niet herkend (verwacht JJJJ-MM-DD).")
-    if uitv_d is None:
-        warnings.append("Geen uitvoeringsdatum (montagedatum) opgegeven: tarieven vanaf 2025 en minimum 3 m² aangenomen. "
-                        "De uitvoeringsdatum is leidend voor het subsidiebedrag.")
-    oud = uitv_d is not None and uitv_d < date(2025, 1, 1)
-    scenario = (klant.get("scenario") or cfg.get("scenario_standaard") or "enkel").lower()
-    if scenario not in ("enkel", "meerdere", "monument"):
-        warnings.append(f"Scenario '{scenario}' onbekend (enkel / meerdere / monument) — 'enkel' gebruikt.")
-        scenario = "enkel"
-    if oud:
-        warnings.append("Montage vóór 2025: bedragen volgens de oude tabel (enkele maatregel); richtbedragen voor meerdere maatregelen/monument niet berekend.")
-    min_m2 = g["min_m2_tot_2024"] if oud else g["min_m2_vanaf_2025"]
+    # Geen montagedatum: altijd de actuele tarieven (RVO-meldcodelijst) en het actuele minimum.
+    oud = False
+    scenario = "enkel"  # 'bedrag_indicatief' = bedrag bij één maatregel; alle drie de situaties staan in 'richtbedragen'
+    min_m2 = g["min_m2_vanaf_2025"]
 
     # ---- per positie ------------------------------------------------------
     pos_out = []
@@ -428,7 +413,6 @@ def evaluate(report: Report, klant: Optional[dict] = None, cfg: Optional[dict] =
             "postcode": klant.get("postcode"),
             "plaats": klant.get("plaats"),
             "email": klant.get("email"),
-            "uitvoeringsdatum": uitv_d.isoformat() if uitv_d else None,
         },
         "vestiging": vest,
         "productomschrijving": product,
@@ -438,12 +422,11 @@ def evaluate(report: Report, klant: Optional[dict] = None, cfg: Optional[dict] =
             "m2": totaal_m2,
             "m2_voor_bedrag": sum(m["m2_voor_bedrag"] for m in maatregelen),
             "bedrag_indicatief": totaal_bedrag,
-            "scenario": scenario,
             "richtbedragen": totaal_scenario,
             "minimum_m2": min_m2,
             "maximum_m2": g["max_m2"],
             "voldoet_minimum": voldoet_min,
-            "tarieftabel": "tot_2024" if oud else "vanaf_2025",
+            "tarieftabel": "actueel",
         },
         "posities": pos_out,
         "waarschuwingen": warnings,

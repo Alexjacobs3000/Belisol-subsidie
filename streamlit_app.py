@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import hmac
 import json
-from datetime import date
 from pathlib import Path
 
 import streamlit as st
@@ -175,22 +174,14 @@ with st.form("klant"):
     huisnr = k5.text_input("Huisnr.", value=report.huisnummer or "")
     postcode = k6.text_input("Postcode")
     plaats = k7.text_input("Plaats")
-    k8, k9 = st.columns(2)
-    montage_bekend = k8.checkbox("Montagedatum bekend", value=False)
-    montage = k8.date_input("Montagedatum", value=date.today(), format="DD-MM-YYYY", help="Wordt alleen gebruikt als \"Montagedatum bekend\" aangevinkt is.")
-    scenario_label = k9.selectbox(
-        "Situatie klant (bepaalt het hoofdbedrag)",
-        ["Eén maatregel (alleen glas/deuren)", "Meerdere maatregelen (binnen 24 maanden)", "Monumentale woning"])
     ok = st.form_submit_button("Subsidie-overzicht maken", type="primary", use_container_width=True)
 
 if not ok and "result" not in st.session_state:
     st.stop()
 
-scenario = {"Eén": "enkel", "Mee": "meerdere", "Mon": "monument"}[scenario_label[:3]]
 klant = {
     "naam": naam or None, "aanhef": aanhef or None, "email": email or None, "straat": straat or None,
     "huisnummer": huisnr or None, "postcode": postcode or None, "plaats": plaats or None,
-    "uitvoeringsdatum": montage.isoformat() if montage_bekend else None, "scenario": scenario,
     "flens_bevestigd": flens_bevestigd, "flens_mm": flens_mm,
 }
 if ok:

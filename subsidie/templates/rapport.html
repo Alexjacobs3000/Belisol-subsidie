@@ -104,7 +104,7 @@ tr { page-break-inside: avoid; }
 tfoot td { font-weight: 800; color: var(--navy); border-bottom: none; border-top: 1.2pt solid var(--navy); }
 
 /* ---------- steps ---------- */
-.two { display: flex; gap: 6mm; }
+.two { display: flex; gap: 6mm; page-break-inside: avoid; }
 .two > div { flex: 1; }
 .steps { counter-reset: s; margin: 0; padding: 0; list-style: none; }
 .steps li { position: relative; padding: 0 0 2mm 9mm; }
@@ -124,7 +124,9 @@ tfoot td { font-weight: 800; color: var(--navy); border-bottom: none; border-top
 table.rb td { vertical-align: top; padding: 2mm 1.5mm; }
 table.rb th.hl, table.rb td.hl { background: var(--sky-soft); }
 table.rb tr.grand td { font-size: 11pt; padding: 3mm 1.5mm; }
-table.rb tr.grand td.hl { background: var(--navy); color: #fff; }
+table.rb tr.grand td { background: var(--navy); color: #fff; }
+table.rb tr.grand td:first-child { border-radius: 2mm 0 0 2mm; }
+table.rb tr.grand td:last-child { border-radius: 0 2mm 2mm 0; }
 .scen { display: flex; gap: 4mm; margin: 3mm 0 2mm; font-size: 8pt; color: var(--muted); }
 .scen > div { flex: 1; border-top: 2pt solid var(--sky); padding-top: 1.5mm; }
 .scen b { color: var(--navy); }
@@ -165,51 +167,19 @@ h2.section { margin-top: 7mm; }
 
 <p>{{ klant.aanhef }},</p>
 <p>Bedankt dat u voor Belisol heeft gekozen. Uw nieuwe kozijnen{% if heeft_deur %} en deur{% endif %} komen in aanmerking voor de
-Investeringssubsidie duurzame energie en energiebesparing (ISDE). Hieronder vindt u alle gegevens die u in het aanvraagformulier
-van RVO nodig heeft — u kunt ze één op één overnemen.</p>
+Investeringssubsidie duurzame energie en energiebesparing (ISDE). Hieronder ziet u welk subsidiebedrag u kunt verwachten.
+Op de volgende pagina vindt u alle gegevens die u in het aanvraagformulier van RVO nodig heeft.</p>
 
-<div class="kpis">
-  <div class="kpi"><div class="v">{{ nl(totaal.m2) }} <small>m²</small></div><div class="k">Geïsoleerd oppervlak (netto, excl. flens)</div></div>
-  <div class="kpi {% if totaal.scenario == 'enkel' %}accent{% endif %}"><div class="v">{{ eurr(rb.enkel) }}</div><div class="k">Richtbedrag bij één maatregel*</div></div>
-  <div class="kpi {% if totaal.scenario != 'enkel' %}accent{% endif %}"><div class="v">{{ eurr(rb.meerdere) }}</div><div class="k">Richtbedrag bij meerdere maatregelen*</div></div>
-</div>
-
-<h2>Gegevens voor uw aanvraag <span class="light">— stap 2 van het RVO-formulier</span></h2>
-
-<div class="general">
-  <div class="field"><div class="label">KVK-nummer uitvoerend bedrijf</div><div class="v">{{ vestiging.kvk or "–" }}</div></div>
-  <div class="field"><div class="label">Datum van montage</div><div class="v">{{ datum_nl(klant.uitvoeringsdatum) if klant.uitvoeringsdatum else "Zie uw opleverbon" }}</div></div>
-  <div class="field full"><div class="label">Productomschrijving</div><div class="v">{{ productomschrijving }}</div></div>
-</div>
-
-{% for m in maatregelen %}
-<div class="measure {% if m.code.startswith('deur') %}door{% endif %}">
-  <div class="head">
-    <h3>{{ m.label }}</h3>
-    <div class="amt">{{ eur0(m.bedragen.enkel.totaal) }}{% if m.bedragen.meerdere.totaal %} <small>tot</small> {{ eur0(m.bedragen.meerdere.totaal) }}{% endif %}</div>
-  </div>
-  <div class="fields">
-    <div class="field"><div class="label">Netto oppervlakte</div><div class="v">{{ nl(m.m2) }} m²</div></div>
-    <div class="field"><div class="label">U-waarde ({{ m.u_label }})</div><div class="v">{{ nl(m.u_waarde) }} W/m²K</div></div>
-    <div class="field"><div class="label">Meldcode</div><div class="v code">{{ m.meldcode or "Overige" }}</div>{% if m.meldcode_product %}<div class="muted" style="font-size:7pt;line-height:1.2">{{ m.meldcode_product|replace("(H) ","") }}</div>{% endif %}</div>
-    <div class="field"><div class="label">Elementen</div><div class="v">{{ m.posities|length }} <span class="muted" style="font-size:8pt;font-weight:600">(pos. {{ m.posities|join(", ") }})</span></div></div>
-  </div>
-  {% if m.verklaring_bouwbedrijf_nodig %}<div class="note">Hoge isolatiewaarde: voeg de ondertekende verklaring van het uitvoerend bedrijf (zie verderop) toe aan uw aanvraag.</div>{% endif %}
-</div>
-{% endfor %}
-
-<!-- ============================ PAGINA 2 ============================ -->
-<div class="pb"></div>
-<h2>Richtbedragen <span class="light">— wat kunt u verwachten?</span></h2>
+<h2 style="margin-top:6mm">Indicatieve subsidiebedragen <span class="light">— wat kunt u verwachten?</span></h2>
 <p class="muted" style="font-size:8.5pt">Het bedrag per m² hangt af van uw situatie. Glas, isolerende panelen en isolerende deuren samen tellen als één maatregel (glasisolatie).
 Bedragen volgens de RVO-meldcodelijst{% if meldcodelijst.bron %} ({{ meldcodelijst.bron|replace(".xlsx","")|replace("Meldcodelijst Hoogrendementsglas - ","") }}){% endif %}; de oppervlakte wordt per maatregel afgerond op hele m².</p>
 <table class="rb">
   <thead>
     <tr>
       <th>Maatregel</th><th class="num">m²</th>
-      <th class="num {% if totaal.scenario == 'enkel' %}hl{% endif %}">Eén maatregel</th>
-      <th class="num {% if totaal.scenario == 'meerdere' %}hl{% endif %}">Meerdere maatregelen</th>
-      <th class="num {% if totaal.scenario == 'monument' %}hl{% endif %}">Monumentale woning</th>
+      <th class="num">Eén maatregel</th>
+      <th class="num">Meerdere maatregelen</th>
+      <th class="num">Monumentale woning</th>
     </tr>
   </thead>
   <tbody>
@@ -219,7 +189,7 @@ Bedragen volgens de RVO-meldcodelijst{% if meldcodelijst.bron %} ({{ meldcodelij
       <td class="num">{{ m.m2_voor_bedrag }}</td>
       {% for sc in ["enkel", "meerdere", "monument"] %}
         {% set b = m.bedragen[sc] %}
-        <td class="num {% if totaal.scenario == sc %}hl{% endif %}">
+        <td class="num">
           {% if b.totaal is not none %}<b>{{ eur0(b.totaal) }}</b><br><span class="muted" style="font-size:7.5pt">{{ eur0(b.per_m2) }}/m²{% if b.gelijk_aan_meerdere %} ¹{% endif %}</span>{% else %}–{% endif %}
         </td>
       {% endfor %}
@@ -230,7 +200,7 @@ Bedragen volgens de RVO-meldcodelijst{% if meldcodelijst.bron %} ({{ meldcodelij
     <tr class="grand">
       <td>Totale te verwachten subsidie</td><td class="num">{{ totaal.m2_voor_bedrag }}</td>
       {% for sc in ["enkel", "meerdere", "monument"] %}
-        <td class="num {% if totaal.scenario == sc %}hl{% endif %}">{{ eurr(rb[sc]) }}</td>
+        <td class="num">{{ eurr(rb[sc]) }}</td>
       {% endfor %}
     </tr>
   </tfoot>
@@ -241,6 +211,31 @@ Bedragen volgens de RVO-meldcodelijst{% if meldcodelijst.bron %} ({{ meldcodelij
   <div><b>Monumentale woning</b> — voor woningen met een monumentenstatus gelden aparte bedragen.{% if maatregelen|selectattr("bedragen.monument.gelijk_aan_meerdere")|list %} ¹ Geen apart monumentbedrag voor deze categorie: het bedrag bij meerdere maatregelen is getoond.{% endif %}</div>
 </div>
 
+<div class="pb"></div>
+<h2>Gegevens voor uw aanvraag <span class="light">— stap 2 van het RVO-formulier</span></h2>
+
+<div class="general">
+  <div class="field"><div class="label">KVK-nummer uitvoerend bedrijf</div><div class="v">{{ vestiging.kvk or "–" }}</div></div>
+  <div class="field"><div class="label">Productomschrijving</div><div class="v">{{ productomschrijving }}</div></div>
+</div>
+
+{% for m in maatregelen %}
+<div class="measure {% if m.code.startswith('deur') %}door{% endif %}">
+  <div class="head">
+    <h3>{{ m.label }}</h3>
+    
+  </div>
+  <div class="fields">
+    <div class="field"><div class="label">Netto oppervlakte</div><div class="v">{{ nl(m.m2) }} m²</div></div>
+    <div class="field"><div class="label">U-waarde ({{ m.u_label }})</div><div class="v">{{ nl(m.u_waarde) }} W/m²K</div></div>
+    <div class="field"><div class="label">Meldcode</div><div class="v code">{{ m.meldcode or "Overige" }}</div>{% if m.meldcode_product %}<div class="muted" style="font-size:7pt;line-height:1.2">{{ m.meldcode_product|replace("(H) ","") }}</div>{% endif %}</div>
+    <div class="field"><div class="label">Elementen</div><div class="v">{{ m.posities|length }} <span class="muted" style="font-size:8pt;font-weight:600">(pos. {{ m.posities|join(", ") }})</span></div></div>
+  </div>
+  {% if m.verklaring_bouwbedrijf_nodig and verklaring %}<div class="note">Hoge isolatiewaarde: voeg de ondertekende verklaring van het uitvoerend bedrijf (zie verderop) toe aan uw aanvraag.</div>{% endif %}
+</div>
+{% endfor %}
+
+<!-- ============================ PAGINA 2 ============================ -->
 <h2 class="section">Overzicht per element</h2>
 <p class="muted" style="font-size:8.5pt">Waarden uit het thermisch rapport van de fabrikant. Netto maten: de flens (aanslag) telt niet mee.</p>
 <table>
@@ -275,7 +270,7 @@ Bedragen volgens de RVO-meldcodelijst{% if meldcodelijst.bron %} ({{ meldcodelij
   </tfoot>
 </table>
 
-<div class="pb"></div>
+{% if verklaring %}<div class="pb"></div>{% endif %}
 {% if verklaring %}
 <div class="declaration" style="margin-top:0">
   <h2>Verklaring uitvoerend bedrijf</h2>
@@ -317,8 +312,8 @@ Bedragen volgens de RVO-meldcodelijst{% if meldcodelijst.bron %} ({{ meldcodelij
 </div>
 
 <div class="disclaimer">
-  * Richtbedragen zijn een indicatie op basis van de RVO-meldcodelijst en de tarieven {{ "vanaf 1 januari 2025" if totaal.tarieftabel == "vanaf_2025" else "tot en met 31 december 2024" }}
-  (oppervlakte afgerond op hele m²; ≥ 0,50 naar boven). Aan deze bedragen kunnen geen rechten worden ontleend; RVO stelt het definitieve bedrag vast en de datum van montage is leidend.
+  * Richtbedragen zijn een indicatie op basis van de RVO-meldcodelijst en de actuele tarieven
+  (oppervlakte afgerond op hele m²; ≥ 0,50 naar boven). Aan deze bedragen kunnen geen rechten worden ontleend; RVO stelt het definitieve bedrag vast.
   Minimaal {{ nl(totaal.minimum_m2, 0) }} m², maximaal {{ nl(totaal.maximum_m2, 0) }} m² per aanvraag.
   Meer info: {{ rvo_link }} · Vragen? Uw Belisol-adviseur helpt u graag: {{ vestiging.telefoon }} · {{ vestiging.email }}
 </div>

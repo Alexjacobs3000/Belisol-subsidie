@@ -97,7 +97,10 @@
     ]
   },
 
-  "scenario_standaard": "enkel",
+  "rapport": {
+    "_uitleg": "verklaring_uitvoerend_bedrijf_tonen: kader met handtekening voor deuren/panelen met hoge isolatiewaarde (brochure p. 11-12). Standaard uit: de meldcode uit de RVO-lijst en het thermisch rapport tonen de isolatiewaarde al aan.",
+    "verklaring_uitvoerend_bedrijf_tonen": false
+  },
 
   "productomschrijving": {
     "triple_glas": "Isolerende PVC raamkozijnen met HR+++ triple glas",

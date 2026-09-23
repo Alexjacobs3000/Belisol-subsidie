@@ -5,9 +5,10 @@ subsidiebrochure (FEB26) toe en levert:
 
 1. **JSON** met per maatregel de m², U-waarde, meldcode, tarief en indicatief bedrag, plus
    platte `mail_velden` voor e-mailtemplates en een lijst `waarschuwingen`;
-2. een **klantrapport (PDF, 2 pagina's)** in Belisol-huisstijl met alle gegevens voor het
-   RVO-formulier, een overzicht per element (met kozijnschets), de verklaring van het
-   uitvoerend bedrijf (bij deur/paneel met hoge isolatiewaarde) en een checklist.
+2. een **klantrapport (PDF, 3 pagina's)** in Belisol-huisstijl met alle gegevens voor het
+   RVO-formulier, richtbedragen, een overzicht per element (met kozijnschets) en een checklist.
+   Een verklaring van het uitvoerend bedrijf (deur/paneel met hoge isolatiewaarde) kan aangezet
+   worden via `config.json → rapport.verklaring_uitvoerend_bedrijf_tonen` (standaard uit).
 
 ## Structuur
 
@@ -30,7 +31,7 @@ samples/                voorbeeld Bisheshar 2063 (invoer, JSON en PDF)
 
 1. upload de **bestelling** (definitieve opmeting) én het **Uw-rapport** van de leverancier;
 2. controleer de bestelling (pagina's worden getoond) en bevestig of er een flens/aanslag is;
-3. vul klantgegevens, montagedatum en situatie (één maatregel / meerdere / monument) aan;
+3. vul de klantgegevens aan;
 4. bekijk de uitkomst en waarschuwingen en **download het subsidie-overzicht (PDF)** (en optioneel de JSON).
 
 Lokaal: `streamlit run streamlit_app.py`
@@ -53,7 +54,7 @@ Klantdocumenten (map `samples/`) staan in `.gitignore` en gaan niet mee naar Git
 ```bash
 pip install -r requirements.txt
 python verwerk.py samples/2616563371_2_uw_value.pdf --naam Bisheshar \
-    --straat Saltshof --plaats Wijchen --uitvoeringsdatum 2026-06-20 \
+    --straat Saltshof --plaats Wijchen \
     --json uit.json --pdf subsidie.pdf
 ```
 
@@ -69,7 +70,7 @@ op een server (bv. Azure Container Apps, een VPS of naast een self-hosted n8n).
 
 | Endpoint | Invoer (multipart/form-data) | Uitvoer |
 |---|---|---|
-| `POST /verwerk` | `bestand` (PDF) + optioneel `naam`, `aanhef`, `straat`, `huisnummer`, `postcode`, `plaats`, `email`, `uitvoeringsdatum` (JJJJ-MM-DD), `scenario` (`enkel` / `meerdere` / `monument`) | JSON. Met `?met_pdf=true` ook `rapport_pdf_base64` |
+| `POST /verwerk` | `bestand` (PDF) + optioneel `naam`, `aanhef`, `straat`, `huisnummer`, `postcode`, `plaats`, `email` | JSON. Met `?met_pdf=true` ook `rapport_pdf_base64` |
 | `POST /verwerk/pdf` | idem | het klantrapport als PDF-bestand |
 | `GET /health` | – | `{"status":"ok"}` |
 
@@ -79,7 +80,7 @@ Header `X-API-Key` is verplicht als `SUBSIDIE_API_KEY` is ingesteld.
 
 1. **Trigger**: bv. Outlook/IMAP-trigger op de mailbox waar de leveranciersrapporten binnenkomen
    (filter op bijlage `*_uw_value.pdf`), of een trigger vanuit Connect.
-2. **Klantgegevens ophalen** (naam, adres, e-mail, montagedatum) — de referentie in het rapport
+2. **Klantgegevens ophalen** (naam, adres, e-mail) — de referentie in het rapport
    (`C26 BNNIM Bischeshar 2063`) levert vestigingscode, naam en huisnummer; zoek hiermee het dossier op.
 3. **HTTP Request** → `POST {url}/verwerk?met_pdf=true`, body *Form-Data*:
    `bestand` = *n8n Binary File* (de bijlage), overige velden uit stap 2.
@@ -94,7 +95,7 @@ Header `X-API-Key` is verplicht als `SUBSIDIE_API_KEY` is ingesteld.
   (nu `103.446`), een trefwoord als "deur" voorkomt, of — als laatste redmiddel, met
   waarschuwing — hoog/smal element met vleugel.
 * **Glas**: hoogste Ug van het element ≤ 0,7 → triple glas; ≤ 1,2 → HR++; anders niet subsidiabel.
-* **Deur**: Uw (Ud) ≤ 1,0 → hoog tarief (+ verklaring bouwbedrijf); ≤ 1,5 → laag. Alleen samen met HR++/triple glas.
+* **Deur**: Uw (Ud) ≤ 1,0 → hoog tarief; ≤ 1,5 → laag. Alleen samen met HR++/triple glas.
 * **Flens (aanslag / T-kader)**: telt in Nederland niet mee en gaat aan alle zijden van de maat af.
   Per systeem staat in `config.json → flens` welke kaderprofielen een flens hebben, hoe breed die is
   en of het leveranciersrapport de maten al zonder flens geeft. Certix 116: kader 101.331/101.333 =
@@ -112,12 +113,12 @@ Header `X-API-Key` is verplicht als `SUBSIDIE_API_KEY` is ingesteld.
 * **Richtbedragen**: per maatregel en totaal voor drie situaties, met bedragen uit de meldcodelijst:
   één maatregel, meerdere maatregelen (verdubbeling) en monumentale woning. Staat er geen apart
   monumentbedrag in de lijst (triple glas, deur hoog), dan wordt het bedrag bij meerdere maatregelen
-  getoond (met voetnoot). `scenario` bepaalt welk bedrag als `bedrag_indicatief` geldt (standaard `enkel`).
+  getoond (met voetnoot). Het klantrapport toont altijd alle drie in één tabel; `bedrag_indicatief` in de JSON = één maatregel.
 * **Oppervlakte**: netto maat per positie (na eventuele flensaftrek) × aantal stuks (kozijn + glas).
   Panelen tellen mee in het kozijn (`panelen.modus = meetellen_bij_kozijn`); op `apart` zetten
   maakt er een aparte maatregel "isolerend paneel" van.
-* **Bedrag**: m² per maatregel afgerond (≥ 0,50 omhoog) × tarief. Tarieftabel op basis van de
-  montagedatum (vóór 2025: oude tarieven, minimum 8 m²; daarna minimum 3 m²). Max. 45 m².
+* **Bedrag**: m² per maatregel afgerond (≥ 0,50 omhoog) × tarief uit de actuele meldcodelijst.
+  Minimum 3 m², maximum 45 m². Er wordt geen montagedatum gebruikt.
 
 ## Nieuwe meldcodelijst van RVO
 

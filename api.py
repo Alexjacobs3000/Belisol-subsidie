@@ -50,13 +50,12 @@ async def verwerk(
     naam: Optional[str] = Form(None), aanhef: Optional[str] = Form(None),
     straat: Optional[str] = Form(None), huisnummer: Optional[str] = Form(None),
     postcode: Optional[str] = Form(None), plaats: Optional[str] = Form(None),
-    email: Optional[str] = Form(None), uitvoeringsdatum: Optional[str] = Form(None),
-    scenario: Optional[str] = Form(None, description="enkel | meerdere | monument"),
+    email: Optional[str] = Form(None),
     met_pdf: bool = False,
     x_api_key: Optional[str] = Header(None),
 ):
     _check_key(x_api_key)
-    report, result = _run(await bestand.read(), locals_klant(naam, aanhef, straat, huisnummer, postcode, plaats, email, uitvoeringsdatum, scenario))
+    report, result = _run(await bestand.read(), locals_klant(naam, aanhef, straat, huisnummer, postcode, plaats, email))
     if met_pdf:
         result["rapport_pdf_base64"] = base64.b64encode(render_pdf(result, report)).decode()
         result["rapport_bestandsnaam"] = bestandsnaam(result)
@@ -69,12 +68,11 @@ async def verwerk_pdf(
     naam: Optional[str] = Form(None), aanhef: Optional[str] = Form(None),
     straat: Optional[str] = Form(None), huisnummer: Optional[str] = Form(None),
     postcode: Optional[str] = Form(None), plaats: Optional[str] = Form(None),
-    email: Optional[str] = Form(None), uitvoeringsdatum: Optional[str] = Form(None),
-    scenario: Optional[str] = Form(None, description="enkel | meerdere | monument"),
+    email: Optional[str] = Form(None),
     x_api_key: Optional[str] = Header(None),
 ):
     _check_key(x_api_key)
-    report, result = _run(await bestand.read(), locals_klant(naam, aanhef, straat, huisnummer, postcode, plaats, email, uitvoeringsdatum, scenario))
+    report, result = _run(await bestand.read(), locals_klant(naam, aanhef, straat, huisnummer, postcode, plaats, email))
     return Response(
         render_pdf(result, report), media_type="application/pdf",
         headers={"Content-Disposition": f'attachment; filename="{bestandsnaam(result)}"',
@@ -83,9 +81,9 @@ async def verwerk_pdf(
     )
 
 
-def locals_klant(naam, aanhef, straat, huisnummer, postcode, plaats, email, uitvoeringsdatum, scenario=None):
+def locals_klant(naam, aanhef, straat, huisnummer, postcode, plaats, email):
     return dict(naam=naam, aanhef=aanhef, straat=straat, huisnummer=huisnummer,
-                postcode=postcode, plaats=plaats, email=email, uitvoeringsdatum=uitvoeringsdatum, scenario=scenario)
+                postcode=postcode, plaats=plaats, email=email)
 
 
 def bestandsnaam(result: dict) -> str:
