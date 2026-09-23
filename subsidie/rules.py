@@ -113,7 +113,19 @@ def flens_info(p: Position, cfg: dict, bevestigd: Optional[bool] = None, mm_over
     opp = p.oppervlakte_m2
     toegepast = "geen flens"
     onzeker = False
-    if heeft:
+    maat_bron = "tabel"
+    tekening_onleesbaar = False
+    if sc.get("maat_uit_tekening"):
+        # Certix: de zwarte maat bij de schets is de maat zonder aanslag en gaat altijd voor
+        tb, th = getattr(p, "tekening_breedte_mm", None), getattr(p, "tekening_hoogte_mm", None)
+        tekening_onleesbaar = tb is None or th is None
+        b, h = tb or b, th or h
+        if (b, h) != (p.breedte_mm, p.hoogte_mm):
+            opp = r2(b * h / 1_000_000)
+        maat_bron = "tabel (tekening niet leesbaar)" if tb is None and th is None else (
+            "tekening (zwart)" if not tekening_onleesbaar else "deels tekening, deels tabel")
+        toegepast = "maat zonder aanslag uit tekening" if not tekening_onleesbaar else "tabelmaat (zwarte maat niet gelezen)"
+    elif heeft:
         if al_netto:
             toegepast = "flens al afgetrokken in leveranciersrapport"
         elif mm:
@@ -125,7 +137,7 @@ def flens_info(p: Position, cfg: dict, bevestigd: Optional[bool] = None, mm_over
             onzeker = True
     return {
         "aanwezig": heeft, "volgens_rapport": rapport_zegt, "bron": bron, "mm_per_zijde": mm if heeft else None,
-        "toegepast": toegepast, "onzeker": onzeker,
+        "toegepast": toegepast, "onzeker": onzeker, "maat_bron": maat_bron, "tekening_onleesbaar": tekening_onleesbaar,
         "netto_breedte_mm": b, "netto_hoogte_mm": h, "netto_m2_per_stuk": opp,
     }
 
@@ -243,6 +255,10 @@ def evaluate(report: Report, klant: Optional[dict] = None, cfg: Optional[dict] =
         if klant.get("flens_bevestigd") is not None and fl["volgens_rapport"] != klant["flens_bevestigd"]:
             flens_conflict.append(p.positie)
         opp = r2(fl["netto_m2_per_stuk"] * p.stuks)
+        if fl["tekening_onleesbaar"]:
+            warnings.append(f"Positie {p.positie} ({p.omschrijving}): de zwarte maat (zonder aanslag) in de tekening kon niet "
+                            f"betrouwbaar gelezen worden — de tabelmaat {nl(p.breedte_mm, 0)} × {nl(p.hoogte_mm, 0)} is gebruikt. "
+                            "Controleer de maat in de tekening van het Uw-rapport.")
         if fl["onzeker"]:
             warnings.append(f"Positie {p.positie} ({p.omschrijving}): flens gevonden ({fl['bron']}) maar flensbreedte voor {p.systeem} "
                             "staat niet in config.json — oppervlakte is zonder aftrek berekend. Controleer!")

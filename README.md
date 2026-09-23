@@ -31,8 +31,8 @@ samples/                voorbeeld Bisheshar 2063 (invoer, JSON en PDF)
 
 1. upload de **bestelling** (definitieve opmeting) én het **Uw-rapport** van de leverancier;
 2. controleer de bestelling (pagina's worden getoond) en bevestig of er een flens/aanslag is.
-   **Bij Certix wordt deze stap overgeslagen** (en is de bestelling niet nodig): het Certix Uw-rapport
-   toont altijd de binnenmaat, zonder flens;
+   **Bij Certix wordt deze stap overgeslagen** (en is de bestelling niet nodig): de maat zonder
+   aanslag wordt uit de tekening in het Uw-rapport gelezen;
 3. vul de klantgegevens aan;
 4. bekijk de uitkomst en waarschuwingen en **download het subsidie-overzicht (PDF)** (en optioneel de JSON).
 
@@ -100,9 +100,11 @@ Header `X-API-Key` is verplicht als `SUBSIDIE_API_KEY` is ingesteld.
 * **Deur**: Uw (Ud) ≤ 1,0 → hoog tarief; ≤ 1,5 → laag. Alleen samen met HR++/triple glas.
 * **Flens (aanslag / T-kader)**: telt in Nederland niet mee en gaat aan alle zijden van de maat af.
   Per systeem staat in `config.json → flens` welke kaderprofielen een flens hebben, hoe breed die is
-  en of het leveranciersrapport de maten al zonder flens geeft. Certix 116: kader 101.331/101.333 =
-  aanslag, 18 mm per zijde, en het Uw-rapport geeft al de maat zonder flens (bestelling 1695 × 1950 →
-  rapport 1659 × 1914), dus er wordt niets dubbel afgetrokken. Voor een formaat dat de maat mét flens
+  en of het leveranciersrapport de maten al zonder flens geeft. **Certix**: in de schets van het
+  Uw-rapport staan de maat zonder aanslag (zwart, het dichtst bij het element) en mét aanslag (groen).
+  De zwarte totaalmaat wordt met OCR (Tesseract) gelezen en altijd gebruikt, ongeacht de tabelmaat.
+  Alleen een waarde die niet groter is dan de tabelmaat en hoogstens 100 mm kleiner wordt aanvaard;
+  anders wordt de tabelmaat gebruikt met een waarschuwing. Voor een formaat dat de maat mét flens
   geeft, wordt (B − 2·flens) × (H − 2·flens) gerekend. Flens gevonden maar breedte onbekend → waarschuwing.
 * **Meldcode** (uit de RVO-meldcodelijst): het merk per systeem staat in `config.json → leveranciers`
   (Certix → Oknoplast-glas; systeemnamen met "Profel", "P8000" … → Profel).

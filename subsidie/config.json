@@ -53,17 +53,19 @@
   },
 
   "flens": {
-    "_uitleg": "In Nederland telt de flens (aanslag / aanslagprofiel / T-kader) niet mee: die wordt aan alle zijden van de maatvoering afgetrokken. Per systeem staat hier welke kaderprofielen een flens hebben, hoe breed die is en of het leveranciersrapport de maten al zonder flens geeft ('rapportmaten_zonder_flens'). Bij Certix geeft het Uw-rapport de kadermaat zonder aanslag (bestelmaat 1695 x 1950 -> rapport 1659 x 1914 = 18 mm per zijde), dus daar wordt niets extra afgetrokken.",
+    "_uitleg": "In Nederland telt de flens (aanslag / aanslagprofiel / T-kader) niet mee: die wordt aan alle zijden van de maatvoering afgetrokken. Per systeem staat hier welke kaderprofielen een flens hebben, hoe breed die is en of het leveranciersrapport de maten al zonder flens geeft ('rapportmaten_zonder_flens'). Certix ('maat_uit_tekening'): in de schets van het Uw-rapport is de zwarte maat die het dichtst bij het element staat de maat zonder aanslag (groen = met aanslag). Die zwarte maat wordt via OCR gelezen en altijd gebruikt; lukt dat niet, dan de tabelmaat met een waarschuwing.",
     "systemen": {
       "CERTIX 116": {
         "flens_kaderartikels": ["101.331", "101.333"],
         "flens_mm_per_zijde": 18,
-        "rapportmaten_zonder_flens": true
+        "rapportmaten_zonder_flens": true,
+        "maat_uit_tekening": true
       },
       "CERTIX 82": {
         "flens_kaderartikels": ["102.312", "102.332"],
         "flens_mm_per_zijde": null,
-        "rapportmaten_zonder_flens": true
+        "rapportmaten_zonder_flens": true,
+        "maat_uit_tekening": true
       }
     },
     "standaard": {
