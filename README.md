@@ -71,7 +71,7 @@ Klantdocumenten (map `samples/`) staan in `.gitignore` en gaan niet mee naar Git
    verdeling bepaald uit de schets (blauw = glas; groot dicht vlak of label **p** = paneel) en de **deelmaten** in
    de tekening (bv. 500 | 1050 = 1550: elke pixel wordt per segment naar mm omgerekend). Dat is een schatting
    (kolom *Paneel (m²)*, aan te passen). Met `panelen.modus = meetellen_bij_kozijn` tellen panelen mee in de m².
-   Deur zonder Ud in de offerte → gerekend als glas + panelen (met Ud ≤ 1,0 telt ze als isolerende deur).
+   Deur zonder Ud in de offerte → telt als isolerende deur Ud ≤ 1,0 (`config.json → sales → standaard_vulling_deur`).
    **Ander formaat**: generiek (blokken `Pos. 1`/`Element 1` of per reeksnaam, `B x H`, Ug/Ud, trefwoorden).
    Wat niet zeker is, staat bij *Controleer* en in de kolom *Opmerking*; de indicatie rekent live mee.
 3. De berekening gebruikt dezelfde regels als Administratie (min. 3 m², max. 45 m², deur alleen met isolatieglas,

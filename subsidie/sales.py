@@ -136,11 +136,9 @@ def _vulling(blok: str, type_: str, cfg: dict) -> tuple[str, str]:
             if ud <= g["deur_laag_ud_max"]:
                 return "deur_laag", ""
             return "geen", f"Ud {nl(ud)} te hoog"
-        glas, _ = _vulling(blok, "Raam", cfg)
-        if glas in ("triple_glas", "hr_plus_plus_glas") and _glastype_genoemd(blok):
-            return glas, ("deur zonder Ud-waarde in de offerte: gerekend als glas en panelen; met een Ud ≤ 1,0 "
-                          "telt de deur als isolerende deur")
-        return "deur_laag", "Ud niet gevonden: aangenomen Ud ≤ 1,5 — controleer"
+        std = cfg.get("sales", {}).get("standaard_vulling_deur", "deur_hoog")
+        label = VULLINGEN[std][0]
+        return std, f"Ud niet in de offerte: gerekend als {label[0].lower()}{label[1:]}"
     m = _UG.search(blok)
     if m:
         ug = float(m.group(1).replace(",", "."))
@@ -155,10 +153,6 @@ def _vulling(blok: str, type_: str, cfg: dict) -> tuple[str, str]:
         return "hr_plus_plus_glas", ""
     std = cfg.get("sales", {}).get("standaard_vulling_raam", "hr_plus_plus_glas")
     return std, f"vulling niet gevonden: aangenomen {VULLINGEN[std][0]} — controleer"
-
-
-def _glastype_genoemd(blok: str) -> bool:
-    return bool(_UG.search(blok) or re.search(r"triple|drievoudig|hr\s*\+\+|dubbel\s*glas|isolatieglas", blok, re.I))
 
 
 def _type(blok: str, gamma_type: Optional[str]) -> str:
@@ -317,7 +311,7 @@ def _lees_belisol(pdf: "pdfium.PdfDocument", paginas: list[str], cfg: dict) -> l
         up = _UP.search(tekst)
         paneel_m2 = None
         img = _schets(page)
-        if img is not None and b and h and vulling != "geen":
+        if img is not None and b and h and vulling != "geen" and not VULLINGEN[vulling][2]:  # deur: telt als geheel
             v = vulling_uit_schets(img, b, h)
             noemt_paneel = re.search(r"paneel|sandwich", tekst, re.I)
             if v and (noemt_paneel or v["p_labels"]) and v["paneel"] > 0.01:

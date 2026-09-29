@@ -44,6 +44,8 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
   van de categorie af → reeks/leverancier zijn in Sales informatief (geen waarschuwingen over de leverancier).
 - Gamma-lijst = Gammas.xlsx (reeksnamen) + Gamma_lijst_alternatief.xlsx (offertenamen 'reeks:'/'gamme:', bv.
   Duoslide 137 → Profel, SlideS → Schmidt); vleugelnamen (Luna, Pure …) worden niet als reeks opgenomen.
+- Deur zonder Ud-waarde in de offerte telt als isolerende deur Ud ≤ 1,0 (`config.json → sales →
+  standaard_vulling_deur`); de hele deurpost (incl. zijlicht) telt als deur, geen paneelschatting.
 - Pagina "Indicatie vierkante meters voor subsidie" (thermisch rapport) is meestal afwezig en is gewoon 90 % van de
   oppervlakte → niet gebruiken.
 
@@ -65,7 +67,6 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
 - Meldcode KA31763 (Certix-deur, uit infomail) staat niet in de RVO-lijst → waarschuwing; laten bevestigen.
 - Monumentbedrag triple/deur hoog en monument met één maatregel (HR++ mogelijk €46) laten bevestigen.
 - KVK-nummers andere vestigingen (bv. Tilburg).
-- Sales: deur zonder Ud: nu glas + panelen (bevestigen).
 
 ## Testen
 `python verwerk.py <uw_rapport.pdf> --naam X --pdf uit.pdf` en `streamlit run streamlit_app.py`.
