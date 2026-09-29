@@ -1,6 +1,11 @@
 # Belisol ISDE-subsidieverwerker
 
-Leest het thermische **Uw-rapport** van de leverancier, past de ISDE-regels uit de
+De webapp heeft twee modules (switch bovenaan):
+
+- **Administratie** — na de bestelling: subsidie-overzicht op basis van de technische documenten (zie hieronder).
+- **Sales** — vóór de bestelling: subsidie-indicatie op basis van een offerte (zie *Sales-module*).
+
+Administratie leest het thermische **Uw-rapport** van de leverancier, past de ISDE-regels uit de
 subsidiebrochure (FEB26) toe en levert:
 
 1. **JSON** met per maatregel de m², U-waarde, meldcode, tarief en indicatief bedrag, plus
@@ -20,6 +25,8 @@ subsidie/data/meldcodelijst.json   RVO-meldcodelijst Hoogrendementsglas (geïmpo
 subsidie/meldcodelijst.py          import + opzoeken van meldcodes en bedragen
 subsidie/parser.py      PDF → posities (afmetingen, Uw/Uf/Ug, panelen, glas, tekening)
 subsidie/rules.py       subsidieregels → maatregelen, bedragen, waarschuwingen
+subsidie/sales.py       Sales: offerte → elementen → indicatie (zelfde regels) → PDF 'Subsidie-indicatie'
+subsidie/gammas.py      reeksnaam → leverancier/materiaal/type (data/gammas.json, uit Gammas.xlsx)
 subsidie/report.py      HTML-template → PDF (WeasyPrint)
 subsidie/templates/     rapport.html (ontwerp klantrapport)
 samples/                voorbeeld Bisheshar 2063 (invoer, JSON en PDF)
@@ -50,6 +57,36 @@ Lokaal: `streamlit run streamlit_app.py`
    Zonder dit secret is de app open voor iedereen met de link.
 
 Klantdocumenten (map `samples/`) staan in `.gitignore` en gaan niet mee naar GitHub.
+
+## Sales-module
+
+1. De verkoper uploadt de **offerte** (PDF; bij een scan wordt OCR gebruikt), of vult de elementen handmatig in.
+2. **Belisol-offerte** ("Voorstel en Opdracht"): per element een pagina *Specificaties – Post 1A – Kozijn*. De app
+   leest per post: **Afmetingen** en **Aantal** (de oppervlakte komt altijd uit deze maten, kozijn inbegrepen),
+   de **reeks** uit de *Detailomschrijving* (`PVC Reeks Classix Blok …`, via de gamma-lijst → **leverancier**; ook
+   reeksfamilies zoals *Classix*), de **vulling** (*Triple plus [HR+++]*, *HR++*, Ug/Ud, ook uit *Opmerkingen*) en
+   de **panelen** (*sandwichpaneel*, *Up = 0,54*). Klant, adres, adviseur en vestiging komen van het voorblad en de
+   overeenkomst. Pagina *Indicatie vierkante meters* (90 %-regel) wordt niet gebruikt.
+   **Panelen in een kozijn**: de tekeningen zijn niet op schaal. Alleen bij verdelingen met panelen wordt de
+   verdeling bepaald uit de schets (blauw = glas; groot dicht vlak of label **p** = paneel) en de **deelmaten** in
+   de tekening (bv. 500 | 1050 = 1550: elke pixel wordt per segment naar mm omgerekend). Dat is een schatting
+   (kolom *Paneel (m²)*, aan te passen). Met `panelen.modus = meetellen_bij_kozijn` tellen panelen mee in de m².
+   Deur zonder Ud in de offerte → telt als isolerende deur Ud ≤ 1,0 (`config.json → sales → standaard_vulling_deur`).
+   **Ander formaat**: generiek (blokken `Pos. 1`/`Element 1` of per reeksnaam, `B x H`, Ug/Ud, trefwoorden).
+   Wat niet zeker is, staat bij *Controleer* en in de kolom *Opmerking*; de indicatie rekent live mee.
+3. De berekening gebruikt dezelfde regels als Administratie (min. 3 m², max. 45 m², deur alleen met isolatieglas,
+   afronding per maatregel, actuele tarieven uit de RVO-meldcodelijst). Meldcodes worden niet gezocht (die volgen
+   na de bestelling uit het thermisch rapport), dus het tarief per categorie geldt voor elke leverancier.
+4. Uitvoer: **Subsidie-indicatie (PDF, 2 pagina's)** met de drie bedragen (één maatregel / meerdere / monument),
+   de opbouw per maatregel, de elementen en de vervolgstappen.
+
+Sales toont geen meldcodes: die volgen pas na de bestelling uit het thermisch rapport (Administratie). Omdat het
+tarief per m² alleen van de categorie afhangt, zijn reeks en leverancier in Sales informatief.
+
+Gamma-lijst bijwerken: `python -m subsidie.gammas <Gammas.xlsx> [Gamma_lijst_alternatief.xlsx]`. De eerste export
+geeft de reeksnamen (`z_3_Serie`, `zzcSupplierName`, `z_2_Material`, `_1_Type_Txt`, `z_6_Vleugel`); de tweede voegt
+de namen toe zoals ze in offertes staan (uit de teksten "reeks: …" / "gamme: …", bv. *Duoslide 137* → Profel,
+*SlideS* → Schmidt) en reeksen die in de eerste ontbreken. Vleugelnamen (Luna, Pure …) tellen niet als reeks.
 
 ## Lokaal draaien (commandline)
 

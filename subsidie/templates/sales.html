@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Subsidie-indicatie {{ klant.naam or "" }}</title>
+{% include "_stijl.html" %}
+<style>
+.kpi.big .v { font-size: 22pt; }
+.lead { font-size: 10.4pt; }
+.tag { display: inline-block; font-size: 7.3pt; font-weight: 700; color: var(--blue); background: var(--sky-soft);
+       padding: .6mm 2.4mm; border-radius: 10mm; letter-spacing: .04em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PAGINA 1 ============================ -->
+<div class="hero">
+  <img src="{{ assets }}/belisol_logo.png" alt="Belisol">
+  <div>
+    <div class="t1">Subsidie-indicatie</div>
+    <div class="t2">ISDE — wat levert uw nieuwe {{ "glas en deur" if heeft_deur else "glas" }} op?</div>
+  </div>
+  <div class="meta">
+    Datum <b>{{ vandaag }}</b><br>
+    {% if bron.ordernummer %}Offerte <b>{{ bron.ordernummer }}</b><br>{% endif %}
+    {% if klant.naam %}Voor <b>{{ klant.naam }}</b>{% endif %}
+  </div>
+  <div class="squares"></div>
+</div>
+
+<div class="addr">
+  <div>
+    <div class="label">Voor</div>
+    <div class="name">{{ klant.naam or "–" }}</div>
+    {% if klant.straat %}{{ klant.straat }} {{ klant.huisnummer or "" }}<br>{% endif %}
+    {% if klant.postcode or klant.plaats %}{{ klant.postcode or "" }} {{ klant.plaats or "" }}{% endif %}
+  </div>
+  <div>
+    <div class="label">Uw adviseur</div>
+    {% if adviseur and adviseur.naam %}
+    <div class="name">{{ adviseur.naam }}</div>
+    {{ vestiging.weergavenaam or vestiging.naam }}<br>{{ adviseur.telefoon or vestiging.telefoon }} · {{ adviseur.email or vestiging.email }}
+    {% else %}
+    <div class="name">{{ vestiging.weergavenaam or vestiging.naam }}</div>
+    {{ vestiging.telefoon }}<br>{{ vestiging.email }}
+    {% endif %}
+  </div>
+</div>
+
+<p>{{ klant.aanhef }},</p>
+<p class="lead">Goed nieuws: met de kozijnen{% if heeft_deur %} en deur{% endif %} uit uw offerte komt u in aanmerking voor de
+Investeringssubsidie duurzame energie en energiebesparing (ISDE). Op basis van de offerte kunt u de volgende subsidie verwachten.</p>
+
+<div class="kpis">
+  <div class="kpi"><div class="v">{{ totaal.m2_voor_bedrag }} <small>m²</small></div><div class="k">isolerend glas{% if heeft_deur %} en deur{% endif %}</div></div>
+  <div class="kpi big"><div class="v">{{ eurr(rb.enkel) }}</div><div class="k">bij één maatregel</div></div>
+  <div class="kpi big accent"><div class="v">{{ eurr(rb.meerdere) }}</div><div class="k">bij meerdere maatregelen</div></div>
+  <div class="kpi big"><div class="v">{{ eurr(rb.monument) }}</div><div class="k">monumentale woning</div></div>
+</div>
+
+<h2>Zo is het bedrag opgebouwd</h2>
+<table class="rb">
+  <thead>
+    <tr>
+      <th>Maatregel</th><th class="num">m²</th>
+      <th class="num">Eén maatregel</th>
+      <th class="num">Meerdere maatregelen</th>
+      <th class="num">Monumentale woning</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for m in maatregelen %}
+    <tr>
+      <td><b>{{ m.label }}</b></td>
+      <td class="num">{{ m.m2_voor_bedrag }}</td>
+      {% for sc in ["enkel", "meerdere", "monument"] %}
+        {% set b = m.bedragen[sc] %}
+        <td class="num">
+          {% if b.totaal is not none %}<b>{{ eur0(b.totaal) }}</b><br><span class="muted" style="font-size:7.5pt">{{ eur0(b.per_m2) }}/m²{% if b.gelijk_aan_meerdere %} ¹{% endif %}</span>{% else %}–{% endif %}
+        </td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr class="grand">
+      <td>Te verwachten subsidie</td><td class="num">{{ totaal.m2_voor_bedrag }}</td>
+      {% for sc in ["enkel", "meerdere", "monument"] %}
+        <td class="num">{{ eurr(rb[sc]) }}</td>
+      {% endfor %}
+    </tr>
+  </tfoot>
+</table>
+<div class="scen">
+  <div><b>Eén maatregel</b> — u laat alleen glas, panelen en/of deuren isoleren.</div>
+  <div><b>Meerdere maatregelen</b> — u voert binnen 24 maanden nog een maatregel uit, zoals dak-, vloer-, gevel- of bodemisolatie, een warmtepomp, zonneboiler of aansluiting op een warmtenet. Het bedrag per m² verdubbelt.</div>
+  <div><b>Monumentale woning</b> — voor woningen met een monumentenstatus gelden aparte bedragen.{% if maatregelen|selectattr("bedragen.monument.gelijk_aan_meerdere")|list %} ¹ Geen apart monumentbedrag voor deze categorie: het bedrag bij meerdere maatregelen is getoond.{% endif %}</div>
+</div>
+
+<!-- ============================ PAGINA 2 ============================ -->
+<div class="pb"></div>
+<h2>Uw elementen <span class="light">— volgens de offerte</span></h2>
+<p class="muted" style="font-size:8.5pt">Oppervlakte op basis van de maten in de offerte (breedte × hoogte × aantal), kozijn inbegrepen.
+{% if elementen|selectattr("paneel_m2")|list %}Panelen in een kozijn zijn geschat op basis van de tekening en de deelmaten.{% endif %}</p>
+<table>
+  <thead>
+    <tr>
+      <th></th><th>#</th><th>Element</th><th class="num">B × H (mm)</th><th class="num">Aantal</th><th class="num">m²</th><th>Vulling</th><th>Subsidie</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for e in elementen %}
+    <tr>
+      <td>{% if e.tekening %}<img src="data:image/png;base64,{{ e.tekening }}">{% endif %}</td>
+      <td><b>{{ e.nr }}</b></td>
+      <td>{{ e.type }}{% if e.serie %} <b>{{ e.serie }}</b>{% endif %}<br><span class="muted" style="font-size:7.6pt">{{ e.leverancier or "leverancier onbekend" }}{% if e.omschrijving and e.omschrijving != e.serie %} · {{ e.omschrijving }}{% endif %}</span></td>
+      <td class="num">{% if e.breedte_mm and e.hoogte_mm %}{{ nl(e.breedte_mm, 0) }} × {{ nl(e.hoogte_mm, 0) }}{% else %}–{% endif %}</td>
+      <td class="num">{{ e.aantal }}</td>
+      <td class="num"><b>{{ nl(e.m2) if e.m2 is not none else "–" }}</b></td>
+      <td>{{ e.vulling_label }}{% if e.paneel_m2 %}<br><span class="muted" style="font-size:7.6pt">waarvan ± {{ nl(e.paneel_m2) }} m² paneel{% if e.paneel_up %} (Up {{ nl(e.paneel_up) }}){% endif %}</span>{% endif %}</td>
+      <td>
+        {% if e.in_aanmerking %}
+          <span class="pill {{ 'deur' if e.categorie and e.categorie.startswith('deur') else 'glas' }}">{{ korte_label[e.categorie] }}</span>
+        {% else %}
+          <span class="pill nee">Niet subsidiabel</span>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr><td></td><td></td><td colspan="3">Totaal in aanmerking</td><td class="num">{{ nl(totaal.m2) }}</td><td colspan="2"></td></tr>
+  </tfoot>
+</table>
+
+<div class="section two">
+  <div>
+    <h2>Hoe gaat het verder?</h2>
+    <ol class="steps">
+      <li><b>Bestelling en opmeting</b> — na uw akkoord meten wij alles definitief in en bestellen we uw kozijnen.</li>
+      <li><b>Montage</b> — onze monteurs plaatsen uw nieuwe kozijnen{% if heeft_deur %} en deur{% endif %}.</li>
+      <li><b>Subsidie-overzicht</b> — na de montage ontvangt u van Belisol een overzicht met alle gegevens die u nodig heeft voor het RVO-formulier.</li>
+      <li><b>Aanvragen</b> — u vraagt de subsidie zelf aan via rvo.nl/isde, tot 24 maanden na de montage.</li>
+    </ol>
+  </div>
+  <div>
+    <h2>Goed om te weten</h2>
+    <ul class="check">
+      <li>Minimaal {{ nl(totaal.minimum_m2, 0) }} m² en maximaal {{ nl(totaal.maximum_m2, 0) }} m² glas, panelen en deuren samen per aanvraag.</li>
+      <li>Glas, isolerende panelen en isolerende deuren samen tellen als <b>één</b> maatregel.</li>
+      <li>Een isolerende deur telt alleen mee samen met <span style="white-space:nowrap">HR++</span> of triple glas.</li>
+      <li>Plant u binnen 24 maanden nog een tweede maatregel (bv. dakisolatie of een warmtepomp)? Dan verdubbelt het bedrag per m².</li>
+    </ul>
+  </div>
+</div>
+
+<div class="disclaimer">
+  * Deze indicatie is gebaseerd op de maten en producten in de offerte en op de actuele ISDE-tarieven van RVO
+  (oppervlakte per maatregel afgerond op hele m²). De definitieve oppervlakte volgt uit de opmeting en de technische documenten
+  van de fabrikant; aan deze indicatie kunnen geen rechten worden ontleend. RVO stelt het definitieve bedrag vast.
+  Meer info: {{ rvo_link }} · Vragen? {{ vestiging.telefoon }} · {{ vestiging.email }}
+</div>
+
+</body>
+</html>

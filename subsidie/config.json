@@ -134,5 +134,11 @@
     }
   },
 
+  "sales": {
+    "_uitleg": "Sales-module (offerte): aanname als de offerte geen U-waarde noemt. standaard_vulling_deur: deur zonder Ud telt als isolerende deur (deur_hoog = Ud <= 1,0; deur_laag = Ud <= 1,5). standaard_vulling_raam: raam zonder glastype (triple_glas / hr_plus_plus_glas).",
+    "standaard_vulling_deur": "deur_hoog",
+    "standaard_vulling_raam": "hr_plus_plus_glas"
+  },
+
   "rvo_link": "https://www.rvo.nl/subsidies-financiering/isde/woningeigenaren"
 }
