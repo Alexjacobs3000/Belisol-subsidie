@@ -8,9 +8,15 @@ gegevens van Belisol nodig. Deze tool leest het thermische rapport van de levera
 klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subsidiebedragen.
 
 ## Opbouw
-- `streamlit_app.py` — webapp (Streamlit Cloud). Gebruiker uploadt **bestelling** (definitieve opmeting, vaak
+- `streamlit_app.py` — webapp (Streamlit Cloud) met switch bovenaan: **Administratie** en **Sales**. Beide pagina's
+  worden altijd getekend (de andere verborgen via CSS) zodat uploads blijven staan; sessiesleutels per module
+  (`k("…")` → `adm_…`/`sal_…`); in de pagina's `return` i.p.v. `st.stop()`.
+- Administratie: gebruiker uploadt **bestelling** (definitieve opmeting, vaak
   handgeschreven scan) én **Uw-rapport**; bevestigt flens; vult klantgegevens in; downloadt PDF (+ JSON).
   Bij Certix vervalt stap 2 (bestelling controleren) en is de bestelling optioneel (maat komt uit de tekening).
+- Sales (`subsidie/sales.py`, `templates/sales.html`): offerte → elementen (reeks → leverancier via
+  `subsidie/gammas.py` + `data/gammas.json`, maten, aantal, vulling) → bewerkbare tabel → zelfde `rules.evaluate`
+  (zonder meldcodes, tarief per categorie) → PDF "Subsidie-indicatie". Gedeelde huisstijl: `templates/_stijl.html`.
 - `api.py` (FastAPI) / `verwerk.py` (CLI) — zelfde verwerking voor n8n/Zapier.
 - `subsidie/parser.py` — PDF → posities (afmetingen, Uw/Uf/Ug, panelen, glas, kozijnschets).
 - `subsidie/rules.py` — subsidieregels, flens, meldcodes, bedragen, waarschuwingen.
@@ -47,6 +53,8 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
 - Meldcode KA31763 (Certix-deur, uit infomail) staat niet in de RVO-lijst → waarschuwing; laten bevestigen.
 - Monumentbedrag triple/deur hoog en monument met één maatregel (HR++ mogelijk €46) laten bevestigen.
 - KVK-nummers andere vestigingen (bv. Tilburg).
+- Sales: nog geen echte offerte als voorbeeld → offerte-lezer is generiek (Pos./Element-blokken, `B x H`, Ug/Ud,
+  trefwoorden). Met een voorbeeldofferte de lezer afstemmen (maten uit de tekeningen, vulling, aantallen).
 
 ## Testen
 `python verwerk.py <uw_rapport.pdf> --naam X --pdf uit.pdf` en `streamlit run streamlit_app.py`.

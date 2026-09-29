@@ -1,6 +1,11 @@
 # Belisol ISDE-subsidieverwerker
 
-Leest het thermische **Uw-rapport** van de leverancier, past de ISDE-regels uit de
+De webapp heeft twee modules (switch bovenaan):
+
+- **Administratie** — na de bestelling: subsidie-overzicht op basis van de technische documenten (zie hieronder).
+- **Sales** — vóór de bestelling: subsidie-indicatie op basis van een offerte (zie *Sales-module*).
+
+Administratie leest het thermische **Uw-rapport** van de leverancier, past de ISDE-regels uit de
 subsidiebrochure (FEB26) toe en levert:
 
 1. **JSON** met per maatregel de m², U-waarde, meldcode, tarief en indicatief bedrag, plus
@@ -20,6 +25,8 @@ subsidie/data/meldcodelijst.json   RVO-meldcodelijst Hoogrendementsglas (geïmpo
 subsidie/meldcodelijst.py          import + opzoeken van meldcodes en bedragen
 subsidie/parser.py      PDF → posities (afmetingen, Uw/Uf/Ug, panelen, glas, tekening)
 subsidie/rules.py       subsidieregels → maatregelen, bedragen, waarschuwingen
+subsidie/sales.py       Sales: offerte → elementen → indicatie (zelfde regels) → PDF 'Subsidie-indicatie'
+subsidie/gammas.py      reeksnaam → leverancier/materiaal/type (data/gammas.json, uit Gammas.xlsx)
 subsidie/report.py      HTML-template → PDF (WeasyPrint)
 subsidie/templates/     rapport.html (ontwerp klantrapport)
 samples/                voorbeeld Bisheshar 2063 (invoer, JSON en PDF)
@@ -50,6 +57,22 @@ Lokaal: `streamlit run streamlit_app.py`
    Zonder dit secret is de app open voor iedereen met de link.
 
 Klantdocumenten (map `samples/`) staan in `.gitignore` en gaan niet mee naar GitHub.
+
+## Sales-module
+
+1. De verkoper uploadt de **offerte** (PDF; bij een scan wordt OCR gebruikt), of vult de elementen handmatig in.
+2. De app knipt de offerte in elementen (`Pos. 1`, `Element 1` … of per gevonden reeksnaam) en herkent per element:
+   **reeks** (uit de gamma-lijst → **leverancier**), **type** (raam/deur/schuifraam), **maten** (`B x H`),
+   **aantal** en **vulling** (Ug/Ud-waarde of trefwoorden als *triple*, *HR++*). Wat niet zeker is, staat bij
+   *Controleer* en in de kolom *Opmerking*; de verkoper past de tabel aan. De indicatie rekent live mee.
+3. De berekening gebruikt dezelfde regels als Administratie (min. 3 m², max. 45 m², deur alleen met isolatieglas,
+   afronding per maatregel, actuele tarieven uit de RVO-meldcodelijst). Meldcodes worden niet gezocht (die volgen
+   na de bestelling uit het thermisch rapport), dus het tarief per categorie geldt voor elke leverancier.
+4. Uitvoer: **Subsidie-indicatie (PDF, 2 pagina's)** met de drie bedragen (één maatregel / meerdere / monument),
+   de opbouw per maatregel, de elementen en de vervolgstappen.
+
+Gamma-lijst bijwerken: `python -m subsidie.gammas <Gammas.xlsx>` (kolommen `z_3_Serie`, `zzcSupplierName`,
+`z_2_Material`, `_1_Type_Txt`).
 
 ## Lokaal draaien (commandline)
 
