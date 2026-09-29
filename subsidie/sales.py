@@ -20,7 +20,9 @@ from datetime import date
 from pathlib import Path
 from typing import Optional
 
-import pdfplumber
+import pypdfium2 as pdfium
+import pypdfium2.raw as pdfium_c
+from PIL import Image
 
 from . import gammas
 from .parser import Report, Position
@@ -50,7 +52,10 @@ class Element:
     hoogte_mm: Optional[float] = None
     aantal: int = 1
     vulling: str = "hr_plus_plus_glas"
+    paneel_m2: Optional[float] = None   # totaal (alle stuks) aan panelen in het element, geschat uit de schets
+    paneel_up: Optional[float] = None   # Up van het paneel (uit de detailomschrijving)
     opmerking: str = ""  # wat de lezer niet zeker wist
+    tekening: Optional[str] = None      # schets uit de offerte (PNG base64) voor het klantdocument
 
     @property
     def m2(self) -> Optional[float]:
@@ -72,19 +77,51 @@ _UG = re.compile(r"\bUg\s*[=:]?\s*(\d[.,]\d{1,2})", re.I)
 _UD = re.compile(r"\bU[dw]\s*[=:]?\s*(\d[.,]\d{1,2})", re.I)
 
 
-def _tekst(pdf_bytes: bytes) -> tuple[str, bool]:
-    """Tekst van de offerte; bij een scan (geen tekstlaag) via OCR. Geeft (tekst, gescand)."""
-    with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
-        tekst = "\n".join(p.extract_text() or "" for p in pdf.pages)
-        if len(tekst.strip()) > 50:
-            return tekst, False
-        from .tekening import OCR_BESCHIKBAAR
-        if not OCR_BESCHIKBAAR:
-            return tekst, True
-        import pytesseract
-        talen = "nld" if "nld" in pytesseract.get_languages() else "eng"
-        delen = [pytesseract.image_to_string(p.to_image(resolution=300).original, lang=talen) for p in pdf.pages]
-        return "\n".join(delen), True
+def _pagina_tekst(page) -> str:
+    """Tekst per regel (op y-positie, van links naar rechts), zoals pdfplumber.extract_text. pypdfium2 is hier
+    ~100× sneller: offertes bevatten zware vectortekeningen waar pdfplumber seconden per pagina over doet."""
+    tp = page.get_textpage()
+    tekens = []
+    for i in range(tp.count_chars()):
+        c = tp.get_text_range(i, 1)
+        if not c or c in "\r\n\x02":
+            continue
+        l, b, r, t = tp.get_charbox(i, loose=True)
+        tekens.append(((b + t) / 2, t - b, l, r, c))
+    tekens.sort(key=lambda x: -x[0])
+    regels, huidig, y0 = [], [], None
+    for y, h, l, r, c in tekens:
+        if y0 is None or abs(y - y0) > max(1.5, h * 0.4):
+            if huidig:
+                regels.append(huidig)
+            huidig, y0 = [], y
+        huidig.append((l, r, h, c))
+    if huidig:
+        regels.append(huidig)
+    uit = []
+    for rg in regels:
+        rg.sort(key=lambda x: x[0])
+        tekst, vorige = "", None
+        for l, r, h, c in rg:
+            if vorige is not None and l - vorige > h * 0.3 and not tekst.endswith(" "):
+                tekst += " "  # los tekstblok op dezelfde regel (bv. tweede kolom)
+            tekst += c
+            vorige = r
+        uit.append(" ".join(tekst.split()))
+    return "\n".join(x for x in uit if x)
+
+
+def _tekst(pdf: "pdfium.PdfDocument") -> tuple[list[str], bool]:
+    """Tekst per pagina; bij een scan (geen tekstlaag) via OCR. Geeft (pagina's, gescand)."""
+    paginas = [_pagina_tekst(p) for p in pdf]
+    if len("".join(paginas).strip()) > 50:
+        return paginas, False
+    from .tekening import OCR_BESCHIKBAAR
+    if not OCR_BESCHIKBAAR:
+        return paginas, True
+    import pytesseract
+    talen = "nld" if "nld" in pytesseract.get_languages() else "eng"
+    return [pytesseract.image_to_string(p.render(scale=300 / 72).to_pil(), lang=talen) for p in pdf], True
 
 
 def _vulling(blok: str, type_: str, cfg: dict) -> tuple[str, str]:
@@ -99,6 +136,10 @@ def _vulling(blok: str, type_: str, cfg: dict) -> tuple[str, str]:
             if ud <= g["deur_laag_ud_max"]:
                 return "deur_laag", ""
             return "geen", f"Ud {nl(ud)} te hoog"
+        glas, _ = _vulling(blok, "Raam", cfg)
+        if glas in ("triple_glas", "hr_plus_plus_glas") and _glastype_genoemd(blok):
+            return glas, ("deur zonder Ud-waarde in de offerte: gerekend als glas en panelen; met een Ud ≤ 1,0 "
+                          "telt de deur als isolerende deur")
         return "deur_laag", "Ud niet gevonden: aangenomen Ud ≤ 1,5 — controleer"
     m = _UG.search(blok)
     if m:
@@ -114,6 +155,10 @@ def _vulling(blok: str, type_: str, cfg: dict) -> tuple[str, str]:
         return "hr_plus_plus_glas", ""
     std = cfg.get("sales", {}).get("standaard_vulling_raam", "hr_plus_plus_glas")
     return std, f"vulling niet gevonden: aangenomen {VULLINGEN[std][0]} — controleer"
+
+
+def _glastype_genoemd(blok: str) -> bool:
+    return bool(_UG.search(blok) or re.search(r"triple|drievoudig|hr\s*\+\+|dubbel\s*glas|isolatieglas", blok, re.I))
 
 
 def _type(blok: str, gamma_type: Optional[str]) -> str:
@@ -146,10 +191,8 @@ def _blokken(tekst: str) -> list[str]:
     return [tekst[a:b] for a, b in zip(starts, starts[1:]) if tekst[a:b].strip()]
 
 
-def lees_offerte(pdf_bytes: bytes, cfg: Optional[dict] = None) -> dict:
-    """Leest de offerte. Geeft {'elementen': [Element], 'gescand': bool, 'meldingen': [str], 'offertenummer'}."""
-    cfg = cfg or load_config()
-    tekst, gescand = _tekst(pdf_bytes)
+def _lees_generiek(tekst: str, gescand: bool, cfg: dict) -> dict:
+    """Onbekend offerteformaat: knip op 'Pos. 1'/'Element 1'… of op reeksnamen en zoek maten/vulling in de tekst."""
     meldingen = []
     if gescand:
         meldingen.append("De offerte is een scan: de tekst is met OCR gelezen. Controleer de elementen extra goed.")
@@ -193,9 +236,169 @@ def lees_offerte(pdf_bytes: bytes, cfg: Optional[dict] = None) -> dict:
             type=type_, breedte_mm=b, hoogte_mm=h, aantal=max(aantal, 1), vulling=vulling, opmerking="; ".join(opmerkingen)))
     if not elementen:
         meldingen.append("Er zijn geen elementen herkend in de offerte. Vul de elementen hieronder handmatig in.")
-    nr = re.search(r"offerte\s*(?:nr\.?|nummer)?\s*[:#]?\s*([A-Z0-9][\w/-]{3,})", tekst, re.I)
-    return {"elementen": elementen, "gescand": gescand, "meldingen": meldingen,
-            "offertenummer": nr.group(1) if nr else None, "series_gevonden": sorted({s for _, s in gammas.vind_series(tekst)})}
+    return {"elementen": elementen, "meldingen": meldingen}
+
+
+# ---- Belisol-offerte ('Voorstel en Opdracht'): per element een pagina 'Specificaties / Post 1A - Kozijn' met
+# Afmetingen, Aantal, Detailomschrijving product, Opmerkingen en een schets.
+_POST = re.compile(r"^\s*Post\s+(\w+)\s*-\s*(.+?)\s*$", re.M | re.I)
+_AFM = re.compile(r"Afmetingen:\s*(\d{3,5})\s*mm\s*[x×]\s*(\d{3,5})\s*mm", re.I)
+_UP = re.compile(r"\bUp\s*[=:]?\s*(\d[.,]\d{1,2})", re.I)
+_VOET = re.compile(r"^(?:.*\bNL\s?\d{4}\.\d{2}\.\d{3}\.B\d{2}.*|Offerte nr\..*|Belisol\. Liefde voor het vak\..*)$", re.M)
+POST_TYPE = {"kozijn": "Raam", "raam": "Raam", "deur": "Deur", "schuifpui": "Schuifraam", "schuifraam": "Schuifraam",
+             "vouwwand": "Vouwwand"}
+
+
+def _sectie(tekst: str, kop: str, eind: tuple[str, ...]) -> str:
+    m = re.search(rf"{kop}\s*:?\s*\n", tekst, re.I)
+    if not m:
+        return ""
+    rest = tekst[m.end():]
+    stops = [rest.find(e) for e in eind if rest.find(e) >= 0]
+    return _VOET.sub("", rest[:min(stops)] if stops else rest).strip()
+
+
+def _reeks(detail: str) -> str:
+    """Reeksnaam uit de detailomschrijving: '• PVC Reeks Classix Blok (T-kaderprofiel)', '• Reeks : SlideS …' of de
+    eerste opsomming ('• Duoslide (T-kaderprofiel) Buitenzicht')."""
+    m = re.search(r"Reeks\s*:?\s*(.+?)\s*(?:\(|\bBuitenzicht\b|\bBinnenzicht\b|$)", detail, re.M | re.I)
+    if m:
+        return m.group(1).strip()
+    m = re.search(r"^[•·-]\s*([A-Z][\w+ -]*?)\s*(?:\(|\bBuitenzicht\b|\bBinnenzicht\b|$)", detail, re.M)
+    return m.group(1).strip() if m else ""
+
+
+def _schets(page) -> Optional[Image.Image]:
+    """De schets van het element: de grootste afbeelding op de pagina, ook binnen formulieren (het logo linksboven is
+    klein en valt af)."""
+    kand = []
+    for o in page.get_objects(filter=[pdfium_c.FPDF_PAGEOBJ_IMAGE], max_depth=5):
+        l, b, r, t = o.get_bounds()
+        w, h = o.get_px_size()
+        if r - l > 60 and w * h > 100_000:
+            kand.append((w * h, o))
+    if not kand:
+        return None
+    try:
+        return max(kand, key=lambda x: x[0])[1].get_bitmap(render=False).to_pil().convert("RGB")
+    except Exception:
+        return None
+
+
+def _png_b64(img, max_px: int = 360) -> str:
+    import base64
+    im = img.copy()
+    im.thumbnail((max_px, max_px))
+    buf = io.BytesIO()
+    im.save(buf, format="PNG", optimize=True)
+    return base64.b64encode(buf.getvalue()).decode()
+
+
+def _lees_belisol(pdf: "pdfium.PdfDocument", paginas: list[str], cfg: dict) -> list[Element]:
+    from .tekening import vulling_uit_schets
+    elementen = []
+    for page, t in zip(pdf, paginas):
+        post = _POST.search(t)
+        if not post or not t.lstrip().lower().startswith("specificaties"):
+            continue
+        afm, aantal = _AFM.search(t), re.search(r"Aantal:\s*(\d+)", t)
+        detail = _sectie(t, "Detailomschrijving product", ("Meer uitleg over element", "Opmerkingen:"))
+        opm_offerte = _sectie(t, "Opmerkingen", ("\u0000",))
+        tekst = detail + "\n" + opm_offerte
+        b, h = (float(afm.group(1)), float(afm.group(2))) if afm else (None, None)
+        n = int(aantal.group(1)) if aantal else 1
+        reeks = _reeks(detail)
+        mat = _materiaal(detail)
+        type_ = POST_TYPE.get(post.group(2).strip().lower()) or _type(tekst, None)
+        g = gammas.kies(reeks, type_, mat) if reeks else None
+        vulling, opm = _vulling(tekst, type_, cfg)
+        opmerkingen = [opm] if opm else []
+        if not reeks:
+            opmerkingen.append("reeks niet gevonden")
+        elif not g:
+            opmerkingen.append(f"reeks '{reeks}' staat niet in de gamma-lijst — kies de leverancier")
+        elif g.get("dubbelzinnig"):
+            opmerkingen.append(f"reeks '{reeks}' bestaat bij {', '.join(g['alternatieven'])} — controleer leverancier")
+        # panelen: alleen als de offerte ze noemt of de schets een 'p' (paneel) toont; verdeling uit schets + deelmaten
+        up = _UP.search(tekst)
+        paneel_m2 = None
+        img = _schets(page)
+        if img is not None and b and h and vulling != "geen":
+            v = vulling_uit_schets(img, b, h)
+            noemt_paneel = re.search(r"paneel|sandwich", tekst, re.I)
+            if v and (noemt_paneel or v["p_labels"]) and v["paneel"] > 0.01:
+                paneel_m2 = r2(v["paneel"] * b * h / 1_000_000 * n)
+                deel = f" (deelmaten {' | '.join(nl(x, 0) for x in v['deelmaten_b'])})" if v.get("deelmaten_b") else ""
+                opmerkingen.append(f"panelen ± {nl(paneel_m2)} m² geschat uit de tekening{deel} — controleer")
+            elif noemt_paneel and not v:
+                opmerkingen.append("offerte noemt een paneel, maar de tekening is niet te lezen — vul 'Paneel m²' in")
+        elementen.append(Element(
+            nr=len(elementen) + 1, omschrijving=f"Post {post.group(1)} – {post.group(2).strip()}",
+            serie=reeks, leverancier=(g or {}).get("leverancier", ""), type=type_, breedte_mm=b, hoogte_mm=h,
+            aantal=max(n, 1), vulling=vulling, paneel_m2=paneel_m2,
+            paneel_up=float(up.group(1).replace(",", ".")) if up else None,
+            opmerking="; ".join(opmerkingen), tekening=_png_b64(img) if img is not None else None))
+    return elementen
+
+
+def _klant_en_verkoper(tekst: str) -> dict:
+    """Klant, adviseur en vestiging uit een Belisol-offerte (voorblad en overeenkomst)."""
+    def zoek(p, flags=re.M):
+        m = re.search(p, tekst, flags)
+        return m
+    klant, vest, adviseur = {}, {}, {}
+    m = zoek(r"^Tussen:\s*(.+?)\s+en\s+(.+?)\s*$")
+    if m:
+        klant["naam"], vest["naam"] = m.group(1).strip(), m.group(2).strip()
+    m = zoek(r"Montageadres\s*:?.*\n(.+)\n(.+)")
+    if m:
+        adres = re.match(r"^(.+?)\s+(\d+\s*[a-zA-Z]?(?:[-/]\d+)?)\b", m.group(1).strip())
+        if adres:
+            klant["straat"], klant["huisnummer"] = adres.group(1), adres.group(2).replace(" ", "")
+        pc = re.match(r"^(\d{4}\s?[A-Z]{2})\s+(.+?)(?:\s+\d{4}\s?[A-Z]{2}\s.*)?$", m.group(2).strip())
+        if pc:
+            klant["postcode"], klant["plaats"] = pc.group(1), pc.group(2).strip()
+    m = zoek(r"^(Belisol [^\n]+)\n(.+)\n(\+?[\d ]{9,})\n(\S+@\S+)$")
+    if m:
+        vest["weergavenaam"] = m.group(1).strip()
+        klant.setdefault("naam", m.group(2).strip())
+        klant["telefoon"], klant["email"] = m.group(3).strip(), m.group(4).strip()
+    m = zoek(r"^(.+)\nUw Belisol adviseur\s*\nTel:\s*(.+)\nE-mail:\s*(\S+)")
+    if m:
+        adviseur = {"naam": m.group(1).strip(), "telefoon": m.group(2).strip(), "email": m.group(3).strip()}
+    m = zoek(r"^(.+?)\s+-\s+(.+?)\s+(\d{4}\s?[A-Z]{2})\s+(.+?)\s+-\s+NL\s?[\d.]+B\d{2}")
+    if m:
+        vest.setdefault("naam", m.group(1).strip())
+        vest["adres"], vest["postcode_plaats"] = m.group(2).strip(), f"{m.group(3)} {m.group(4).strip()}"
+    m = zoek(r"^Telefoon:\s*\S+\s+(.+)$")
+    if m:
+        vest["telefoon"] = m.group(1).strip()
+    m = zoek(r"^E-mail:\s*\S+\s+(\S+@\S+)\s*$")
+    if m:
+        vest["email"] = m.group(1).strip()
+    nr = zoek(r"Offerte\s*nr\.?\s*:?\s*([A-Z0-9][\w/-]{3,})", re.I)
+    return {"klant": klant, "vestiging": vest, "adviseur": adviseur, "offertenummer": nr.group(1) if nr else None}
+
+
+def lees_offerte(pdf_bytes: bytes, cfg: Optional[dict] = None) -> dict:
+    """Leest de offerte. Geeft {'elementen': [Element], 'gescand', 'meldingen', 'offertenummer', 'klant',
+    'vestiging', 'adviseur', 'formaat', 'series_gevonden'}."""
+    cfg = cfg or load_config()
+    pdf = pdfium.PdfDocument(pdf_bytes)
+    try:
+        paginas, gescand = _tekst(pdf)
+        elementen = [] if gescand else _lees_belisol(pdf, paginas, cfg)
+    finally:
+        pdf.close()
+    tekst = "\n".join(paginas)
+    if elementen:
+        uit = {"elementen": elementen, "meldingen": [], "formaat": "Belisol-offerte"}
+    else:
+        uit = dict(_lees_generiek(tekst, gescand, cfg), formaat="onbekend formaat")
+    uit.update(_klant_en_verkoper(tekst))
+    uit["gescand"] = gescand
+    uit["series_gevonden"] = sorted({e.serie for e in uit["elementen"] if e.serie})
+    return uit
 
 
 # ------------------------------------------------------------------ berekenen
@@ -209,11 +412,14 @@ def _positie(e: Element) -> Position:
         hoogte_mm=float(e.hoogte_mm or 0), breedte_mm=float(e.breedte_mm or 0),
         oppervlakte_m2=r2((e.breedte_mm or 0) * (e.hoogte_mm or 0) / 1_000_000),
         uw=u if deur else None, ug=None if (deur or niet) else u,
+        ap_m2=r2(e.paneel_m2 / max(int(e.aantal or 1), 1)) if e.paneel_m2 else None, up=e.paneel_up,
     )
 
 
 def bereken(elementen: list[Element], klant: Optional[dict] = None, vestigingscode: Optional[str] = None,
-            offertenummer: Optional[str] = None, cfg: Optional[dict] = None) -> dict:
+            offertenummer: Optional[str] = None, cfg: Optional[dict] = None, vestiging: Optional[dict] = None,
+            adviseur: Optional[dict] = None) -> dict:
+    """vestiging/adviseur: gegevens uit de offerte; die gaan voor op de vestiging uit config.json."""
     cfg = copy.deepcopy(cfg or load_config())
     # Indicatie per categorie: geen meldcodes zoeken (die volgen na de bestelling uit het thermisch rapport), zodat
     # alle elementen van dezelfde categorie samen worden afgerond, ongeacht de leverancier.
@@ -226,7 +432,7 @@ def bereken(elementen: list[Element], klant: Optional[dict] = None, vestigingsco
     res = evaluate(report, klant, cfg)
 
     # meldingen die over het leveranciersrapport gaan, zijn voor sales niet relevant
-    weg = ("Geen meldcode gevonden", "Meldcode ", "Klantnaam op het leveranciersrapport")
+    weg = ("Geen meldcode gevonden", "Meldcode ", "Klantnaam op het leveranciersrapport", "Vestigingscode", "KVK-nummer")
     meldingen = [w for w in res["waarschuwingen"] if not w.startswith(weg)]
     for e in elementen:
         if not (e.breedte_mm and e.hoogte_mm):
@@ -243,6 +449,10 @@ def bereken(elementen: list[Element], klant: Optional[dict] = None, vestigingsco
         res["elementen"].append(dict(e.to_dict(), vulling_label=VULLINGEN.get(e.vulling, VULLINGEN["geen"])[0],
                                      categorie=p.get("categorie"), in_aanmerking=bool(p.get("in_aanmerking"))))
     res["waarschuwingen"] = meldingen
+    if vestiging:
+        res["vestiging"] = dict(res["vestiging"], **{k: v for k, v in vestiging.items() if v})
+        res["vestiging"].setdefault("weergavenaam", res["vestiging"].get("naam"))
+    res["adviseur"] = adviseur or {}
     res["leveranciers"] = sorted({e.leverancier for e in elementen if e.leverancier})
     res["status"] = "ok" if res["maatregelen"] and res["totaal"]["voldoet_minimum"] else "controle_nodig"
     return res

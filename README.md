@@ -61,10 +61,19 @@ Klantdocumenten (map `samples/`) staan in `.gitignore` en gaan niet mee naar Git
 ## Sales-module
 
 1. De verkoper uploadt de **offerte** (PDF; bij een scan wordt OCR gebruikt), of vult de elementen handmatig in.
-2. De app knipt de offerte in elementen (`Pos. 1`, `Element 1` … of per gevonden reeksnaam) en herkent per element:
-   **reeks** (uit de gamma-lijst → **leverancier**), **type** (raam/deur/schuifraam), **maten** (`B x H`),
-   **aantal** en **vulling** (Ug/Ud-waarde of trefwoorden als *triple*, *HR++*). Wat niet zeker is, staat bij
-   *Controleer* en in de kolom *Opmerking*; de verkoper past de tabel aan. De indicatie rekent live mee.
+2. **Belisol-offerte** ("Voorstel en Opdracht"): per element een pagina *Specificaties – Post 1A – Kozijn*. De app
+   leest per post: **Afmetingen** en **Aantal** (de oppervlakte komt altijd uit deze maten, kozijn inbegrepen),
+   de **reeks** uit de *Detailomschrijving* (`PVC Reeks Classix Blok …`, via de gamma-lijst → **leverancier**; ook
+   reeksfamilies zoals *Classix*), de **vulling** (*Triple plus [HR+++]*, *HR++*, Ug/Ud, ook uit *Opmerkingen*) en
+   de **panelen** (*sandwichpaneel*, *Up = 0,54*). Klant, adres, adviseur en vestiging komen van het voorblad en de
+   overeenkomst. Pagina *Indicatie vierkante meters* (90 %-regel) wordt niet gebruikt.
+   **Panelen in een kozijn**: de tekeningen zijn niet op schaal. Alleen bij verdelingen met panelen wordt de
+   verdeling bepaald uit de schets (blauw = glas; groot dicht vlak of label **p** = paneel) en de **deelmaten** in
+   de tekening (bv. 500 | 1050 = 1550: elke pixel wordt per segment naar mm omgerekend). Dat is een schatting
+   (kolom *Paneel (m²)*, aan te passen). Met `panelen.modus = meetellen_bij_kozijn` tellen panelen mee in de m².
+   Deur zonder Ud in de offerte → gerekend als glas + panelen (met Ud ≤ 1,0 telt ze als isolerende deur).
+   **Ander formaat**: generiek (blokken `Pos. 1`/`Element 1` of per reeksnaam, `B x H`, Ug/Ud, trefwoorden).
+   Wat niet zeker is, staat bij *Controleer* en in de kolom *Opmerking*; de indicatie rekent live mee.
 3. De berekening gebruikt dezelfde regels als Administratie (min. 3 m², max. 45 m², deur alleen met isolatieglas,
    afronding per maatregel, actuele tarieven uit de RVO-meldcodelijst). Meldcodes worden niet gezocht (die volgen
    na de bestelling uit het thermisch rapport), dus het tarief per categorie geldt voor elke leverancier.

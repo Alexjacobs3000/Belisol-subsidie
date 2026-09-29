@@ -37,8 +37,13 @@
   </div>
   <div>
     <div class="label">Uw adviseur</div>
-    <div class="name">{{ vestiging.naam }}</div>
+    {% if adviseur and adviseur.naam %}
+    <div class="name">{{ adviseur.naam }}</div>
+    {{ vestiging.weergavenaam or vestiging.naam }}<br>{{ adviseur.telefoon or vestiging.telefoon }} · {{ adviseur.email or vestiging.email }}
+    {% else %}
+    <div class="name">{{ vestiging.weergavenaam or vestiging.naam }}</div>
     {{ vestiging.telefoon }}<br>{{ vestiging.email }}
+    {% endif %}
   </div>
 </div>
 
@@ -95,22 +100,24 @@ Investeringssubsidie duurzame energie en energiebesparing (ISDE). Op basis van d
 <!-- ============================ PAGINA 2 ============================ -->
 <div class="pb"></div>
 <h2>Uw elementen <span class="light">— volgens de offerte</span></h2>
-<p class="muted" style="font-size:8.5pt">Oppervlakte op basis van de maten in de offerte (breedte × hoogte × aantal).</p>
+<p class="muted" style="font-size:8.5pt">Oppervlakte op basis van de maten in de offerte (breedte × hoogte × aantal), kozijn inbegrepen.
+{% if elementen|selectattr("paneel_m2")|list %}Panelen in een kozijn zijn geschat op basis van de tekening en de deelmaten.{% endif %}</p>
 <table>
   <thead>
     <tr>
-      <th>#</th><th>Element</th><th class="num">B × H (mm)</th><th class="num">Aantal</th><th class="num">m²</th><th>Vulling</th><th>Subsidie</th>
+      <th></th><th>#</th><th>Element</th><th class="num">B × H (mm)</th><th class="num">Aantal</th><th class="num">m²</th><th>Vulling</th><th>Subsidie</th>
     </tr>
   </thead>
   <tbody>
   {% for e in elementen %}
     <tr>
+      <td>{% if e.tekening %}<img src="data:image/png;base64,{{ e.tekening }}">{% endif %}</td>
       <td><b>{{ e.nr }}</b></td>
       <td>{{ e.type }}{% if e.serie %} <b>{{ e.serie }}</b>{% endif %}<br><span class="muted" style="font-size:7.6pt">{{ e.leverancier or "leverancier onbekend" }}{% if e.omschrijving and e.omschrijving != e.serie %} · {{ e.omschrijving }}{% endif %}</span></td>
       <td class="num">{% if e.breedte_mm and e.hoogte_mm %}{{ nl(e.breedte_mm, 0) }} × {{ nl(e.hoogte_mm, 0) }}{% else %}–{% endif %}</td>
       <td class="num">{{ e.aantal }}</td>
       <td class="num"><b>{{ nl(e.m2) if e.m2 is not none else "–" }}</b></td>
-      <td>{{ e.vulling_label }}</td>
+      <td>{{ e.vulling_label }}{% if e.paneel_m2 %}<br><span class="muted" style="font-size:7.6pt">waarvan ± {{ nl(e.paneel_m2) }} m² paneel{% if e.paneel_up %} (Up {{ nl(e.paneel_up) }}){% endif %}</span>{% endif %}</td>
       <td>
         {% if e.in_aanmerking %}
           <span class="pill {{ 'deur' if e.categorie and e.categorie.startswith('deur') else 'glas' }}">{{ korte_label[e.categorie] }}</span>
@@ -122,7 +129,7 @@ Investeringssubsidie duurzame energie en energiebesparing (ISDE). Op basis van d
   {% endfor %}
   </tbody>
   <tfoot>
-    <tr><td></td><td colspan="3">Totaal in aanmerking</td><td class="num">{{ nl(totaal.m2) }}</td><td colspan="2"></td></tr>
+    <tr><td></td><td></td><td colspan="3">Totaal in aanmerking</td><td class="num">{{ nl(totaal.m2) }}</td><td colspan="2"></td></tr>
   </tfoot>
 </table>
 

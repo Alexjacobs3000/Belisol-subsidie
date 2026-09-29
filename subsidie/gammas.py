@@ -85,7 +85,10 @@ def kies(serie: str, type_: Optional[str] = None, materiaal: Optional[str] = Non
          leverancier: Optional[str] = None) -> Optional[dict]:
     """Beste gamma-regel voor een reeks; bij meerdere leveranciers wint de regel die het best past op
     leverancier/type/materiaal (anders de eerste, met 'dubbelzinnig' = True)."""
-    kand = [i for i in load()["items"] if i["serie"].lower() == (serie or "").lower()]
+    naam = _norm(serie).lower()
+    kand = [i for i in load()["items"] if i["serie"].lower() == naam]
+    if not kand and len(naam) >= 4:  # reeksfamilie, bv. 'Classix Blok' -> 'Classix Blok 118', 'Classix Blok 118 HVP', …
+        kand = [i for i in load()["items"] if i["serie"].lower().startswith(naam + " ")]
     if not kand:
         return None
 

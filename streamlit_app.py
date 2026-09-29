@@ -361,14 +361,16 @@ def pagina_administratie():
 # ================================================================ SALES
 VUL_LABEL = {c: v[0] for c, v in sales.VULLINGEN.items()}
 VUL_CODE = {v: c for c, v in VUL_LABEL.items()}
-KOLOMMEN = ["Omschrijving", "Reeks", "Leverancier", "Type", "Vulling", "Breedte (mm)", "Hoogte (mm)", "Aantal", "Opmerking"]
+KOLOMMEN = ["Omschrijving", "Reeks", "Leverancier", "Type", "Vulling", "Breedte (mm)", "Hoogte (mm)", "Aantal",
+            "Paneel (m²)", "Opmerking", "Up", "Tekening"]  # Up en Tekening: verborgen, gaan mee naar het document
 
 
 def _naar_rijen(elementen: list[sales.Element]) -> pd.DataFrame:
     return pd.DataFrame([{
         "Omschrijving": e.omschrijving, "Reeks": e.serie or None, "Leverancier": e.leverancier or None, "Type": e.type,
         "Breedte (mm)": e.breedte_mm, "Hoogte (mm)": e.hoogte_mm, "Aantal": e.aantal,
-        "Vulling": VUL_LABEL.get(e.vulling), "Opmerking": e.opmerking} for e in elementen], columns=KOLOMMEN)
+        "Vulling": VUL_LABEL.get(e.vulling), "Paneel (m²)": e.paneel_m2, "Opmerking": e.opmerking,
+        "Up": e.paneel_up, "Tekening": e.tekening} for e in elementen], columns=KOLOMMEN)
 
 
 def _naar_elementen(df: pd.DataFrame) -> list[sales.Element]:
@@ -386,7 +388,9 @@ def _naar_elementen(df: pd.DataFrame) -> list[sales.Element]:
             nr=len(out) + 1, omschrijving=val(r["Omschrijving"]) or "", serie=serie, leverancier=lev, type=type_,
             breedte_mm=float(b) if b else None, hoogte_mm=float(h) if h else None,
             aantal=int(val(r["Aantal"]) or 1), vulling=VUL_CODE.get(val(r["Vulling"]), "geen"),
-            opmerking=val(r["Opmerking"]) or ""))
+            paneel_m2=float(val(r["Paneel (m²)"])) if val(r["Paneel (m²)"]) else None,
+            paneel_up=float(val(r["Up"])) if val(r["Up"]) else None,
+            opmerking=val(r["Opmerking"]) or "", tekening=val(r["Tekening"])))
     return out
 
 
@@ -405,7 +409,8 @@ def pagina_sales():
         st.info("Upload de **offerte**, of kies **handmatig invullen** om de elementen zelf in te voeren.")
         return
 
-    gelezen = {"elementen": [], "meldingen": [], "offertenummer": None, "series_gevonden": [], "gescand": False}
+    gelezen = {"elementen": [], "meldingen": [], "offertenummer": None, "series_gevonden": [], "gescand": False,
+               "klant": {}, "vestiging": {}, "adviseur": {}, "formaat": None}
     if f_off:
         with st.spinner("Offerte lezen…"):
             gelezen = _offerte(f_off.getvalue())
@@ -420,6 +425,7 @@ def pagina_sales():
     if f_off:
         herkend = len(gelezen["elementen"])
         st.caption(f"{herkend} element{'en' if herkend != 1 else ''} herkend"
+                   + (f" · {gelezen['formaat']}" if gelezen.get("formaat") else "")
                    + (f" · offerte {gelezen['offertenummer']}" if gelezen["offertenummer"] else "")
                    + (f" · reeksen: {', '.join(gelezen['series_gevonden'])}" if gelezen["series_gevonden"] else ""))
 
@@ -435,7 +441,9 @@ def pagina_sales():
         width="stretch",
         column_config={
             "Omschrijving": st.column_config.TextColumn(width="small"),
-            "Reeks": st.column_config.SelectboxColumn(options=gammas.series(), width="small"),
+            "Reeks": st.column_config.SelectboxColumn(  # + reeksnamen uit de offerte die niet exact in de lijst staan
+                options=sorted(set(gammas.series()) | {e.serie for e in S[k("elementen")] if e.serie}, key=str.lower),
+                width="small"),
             "Leverancier": st.column_config.SelectboxColumn(options=gammas.leveranciers()),
             "Type": st.column_config.SelectboxColumn(options=sales.TYPES, default="Raam", required=True, width="small"),
             "Breedte (mm)": st.column_config.NumberColumn("B (mm)", min_value=0, max_value=10000, step=1, format="%d"),
@@ -443,7 +451,10 @@ def pagina_sales():
             "Aantal": st.column_config.NumberColumn(width="small", min_value=1, max_value=999, step=1, default=1, format="%d"),
             "Vulling": st.column_config.SelectboxColumn(options=list(VUL_LABEL.values()), required=True,
                                                         default=VUL_LABEL["hr_plus_plus_glas"]),
+            "Paneel (m²)": st.column_config.NumberColumn(min_value=0, max_value=100, step=0.01, format="%.2f",
+                                                         help="Panelen in het kozijn (geschat uit de tekening)."),
             "Opmerking": st.column_config.TextColumn(disabled=True, width="medium"),
+            "Up": None, "Tekening": None,
         })
     elementen = _naar_elementen(df)
 
@@ -460,18 +471,25 @@ def pagina_sales():
 
     # ---------------------------------------------------------------- 3. klant
     step("Klantgegevens")
-    with st.form(f"sales_klant_{dossier}"):
+    kl, ov, adv = gelezen.get("klant") or {}, gelezen.get("vestiging") or {}, gelezen.get("adviseur") or {}
+    UIT_OFFERTE = "_offerte"
+    keuzes = ([UIT_OFFERTE] if ov else []) + vest_codes
+
+    def vest_label(c):
+        if c == UIT_OFFERTE:
+            return f"{ov.get('weergavenaam') or ov.get('naam')} (uit offerte)" + (f" — adviseur {adv['naam']}" if adv.get("naam") else "")
+        return cfg["vestigingen"][c].get("weergavenaam") or cfg["vestigingen"][c].get("naam") or c
+    with st.form(f"sales_klant_{dossier}_{hash(sig)}"):
         k1, k2, k3 = st.columns(3)
-        naam = k1.text_input("Naam klant")
+        naam = k1.text_input("Naam klant", value=kl.get("naam") or "")
         aanhef = k2.text_input("Aanhef", placeholder="Geachte heer/mevrouw …")
         offertenr = k3.text_input("Offertenummer", value=gelezen.get("offertenummer") or "")
         k4, k5, k6, k7 = st.columns([3, 1, 1.3, 2])
-        straat = k4.text_input("Straat")
-        huisnr = k5.text_input("Huisnr.")
-        postcode = k6.text_input("Postcode")
-        plaats = k7.text_input("Plaats")
-        vest = st.selectbox("Vestiging", vest_codes,
-                            format_func=lambda c: cfg["vestigingen"][c].get("weergavenaam") or cfg["vestigingen"][c].get("naam") or c)
+        straat = k4.text_input("Straat", value=kl.get("straat") or "")
+        huisnr = k5.text_input("Huisnr.", value=kl.get("huisnummer") or "")
+        postcode = k6.text_input("Postcode", value=kl.get("postcode") or "")
+        plaats = k7.text_input("Plaats", value=kl.get("plaats") or "")
+        vest = st.selectbox("Vestiging / adviseur", keuzes, format_func=vest_label)
         ok = st.form_submit_button("Subsidie-indicatie maken", type="primary", width="stretch",
                                    disabled=not elementen)
 
@@ -480,7 +498,9 @@ def pagina_sales():
         klant = {"naam": naam or None, "aanhef": aanhef or None, "straat": straat or None, "huisnummer": huisnr or None,
                  "postcode": postcode or None, "plaats": plaats or None}
         with st.spinner("Berekenen en document opmaken…"):
-            result = sales.bereken(elementen, klant, vest, offertenr or None, cfg=cfg)
+            uit_offerte = vest == UIT_OFFERTE
+            result = sales.bereken(elementen, klant, None if uit_offerte else vest, offertenr or None, cfg=cfg,
+                                   vestiging=ov if uit_offerte else None, adviseur=adv if uit_offerte else None)
             S[k("result")], S[k("pdf")] = result, sales.render_pdf(result)
         S[k("pdf_gedownload")] = False
         S[k("invoer_sig")] = invoer_sig

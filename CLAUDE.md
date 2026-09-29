@@ -35,6 +35,14 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
 - Meldcode deuren op basis van U-waarde (Ud); glas via hoofdmeldcode van het merk.
 - Leveranciers NL: Profel en Oknoplast (Certix = Oknoplast-glas).
 
+## Sales / offertes (door Alex bevestigd)
+- Belisol-offerte: per element pagina "Specificaties / Post 1A - Kozijn" met Afmetingen, Aantal, Detailomschrijving
+  (reeks, glas, panelen, Up), Opmerkingen en schets. Tekst via pypdfium2 (pdfplumber is te traag op deze PDF's).
+- Altijd de maatvoering uit de tekst gebruiken. Tekeningen zijn NIET op schaal: alleen bij verdelingen met panelen
+  de verdeling bepalen uit schets + deelmaten (label 'p' in een glasvak = paneel).
+- Pagina "Indicatie vierkante meters voor subsidie" (thermisch rapport) is meestal afwezig en is gewoon 90 % van de
+  oppervlakte → niet gebruiken.
+
 ## Domeinregels (zie config.json)
 - Glas: Ug ≤ 0,7 triple (€111 / €222), ≤ 1,2 HR++ (€25 / €50 / monument €92).
 - Deur: Ud ≤ 1,0 (€111 / €222), ≤ 1,5 (€25 / €50 / €92). Alleen samen met HR++/triple glas.
@@ -53,8 +61,8 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
 - Meldcode KA31763 (Certix-deur, uit infomail) staat niet in de RVO-lijst → waarschuwing; laten bevestigen.
 - Monumentbedrag triple/deur hoog en monument met één maatregel (HR++ mogelijk €46) laten bevestigen.
 - KVK-nummers andere vestigingen (bv. Tilburg).
-- Sales: nog geen echte offerte als voorbeeld → offerte-lezer is generiek (Pos./Element-blokken, `B x H`, Ug/Ud,
-  trefwoorden). Met een voorbeeldofferte de lezer afstemmen (maten uit de tekeningen, vulling, aantallen).
+- Sales: reeksen 'Duoslide' en 'SlideS' (schuifpuien uit de voorbeeldoffertes) staan niet in Gammas.xlsx →
+  leverancier onbekend; laten aanvullen. Deur zonder Ud: nu glas + panelen (bevestigen).
 
 ## Testen
 `python verwerk.py <uw_rapport.pdf> --naam X --pdf uit.pdf` en `streamlit run streamlit_app.py`.
