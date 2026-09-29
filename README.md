@@ -80,8 +80,13 @@ Klantdocumenten (map `samples/`) staan in `.gitignore` en gaan niet mee naar Git
 4. Uitvoer: **Subsidie-indicatie (PDF, 2 pagina's)** met de drie bedragen (één maatregel / meerdere / monument),
    de opbouw per maatregel, de elementen en de vervolgstappen.
 
-Gamma-lijst bijwerken: `python -m subsidie.gammas <Gammas.xlsx>` (kolommen `z_3_Serie`, `zzcSupplierName`,
-`z_2_Material`, `_1_Type_Txt`).
+Sales toont geen meldcodes: die volgen pas na de bestelling uit het thermisch rapport (Administratie). Omdat het
+tarief per m² alleen van de categorie afhangt, zijn reeks en leverancier in Sales informatief.
+
+Gamma-lijst bijwerken: `python -m subsidie.gammas <Gammas.xlsx> [Gamma_lijst_alternatief.xlsx]`. De eerste export
+geeft de reeksnamen (`z_3_Serie`, `zzcSupplierName`, `z_2_Material`, `_1_Type_Txt`, `z_6_Vleugel`); de tweede voegt
+de namen toe zoals ze in offertes staan (uit de teksten "reeks: …" / "gamme: …", bv. *Duoslide 137* → Profel,
+*SlideS* → Schmidt) en reeksen die in de eerste ontbreken. Vleugelnamen (Luna, Pure …) tellen niet als reeks.
 
 ## Lokaal draaien (commandline)
 

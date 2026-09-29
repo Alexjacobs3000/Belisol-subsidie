@@ -431,8 +431,8 @@ def pagina_sales():
 
     # ---------------------------------------------------------------- 2. elementen
     step("Elementen controleren")
-    st.caption("Controleer reeks, maten, aantal en vulling. Rijen toevoegen of verwijderen kan onderaan/links in de tabel. "
-               "Is de leverancier leeg, dan wordt die uit de reeks afgeleid.")
+    st.caption("Controleer vooral maten, aantal en vulling: die bepalen het bedrag. Reeks en leverancier zijn informatief "
+               "(het tarief per m² is voor elk merk gelijk). Rijen toevoegen of verwijderen kan onderaan/links in de tabel.")
     twijfel = [e for e in S[k("elementen")] if e.opmerking]
     if twijfel:
         st.warning("Controleer:\n" + "\n".join(f"- **{e.nr}. {e.omschrijving or e.serie}** — {e.opmerking}" for e in twijfel))

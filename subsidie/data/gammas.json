@@ -1,1110 +1,2134 @@
 {
- "bron": "Gammas.xlsx",
+ "bron": "Gammas.xlsx + Gamma_lijst_alternatief.xlsx",
  "geimporteerd": "2026-09-29",
  "items": [
   {
    "serie": "BlokPVC",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "BlokPVC",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Certix 116",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Certix 116",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Certix 82",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Certix 82",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Classix 70",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Classix 70",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Classix 70 HVP",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Classix 70 HVP",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Classix 70 S",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Classix 70 S",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Classix 80",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Classix 80",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Classix 80 HVP",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Classix 80 HVP",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Classix Bloc 118",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Classix Bloc 118",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Classix Bloc 118 HVP",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Classix Bloc 118 HVP",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Classix Bloc 118 S",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "Classix Blok 118",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Classix Blok 118",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Classix Blok 118 HVP",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Classix Blok 118 HVP",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Classix Blok 118 S",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Classix One",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Classix One",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Classix Slide",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Schuifraam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Classix bloc 120",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Classix bloc 120",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Classix bloc 120 HVP",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Classix bloc 120 HVP",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "Classix blok 120",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Classix blok 120",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Classix blok 120 HVP",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Classix blok 120 HVP",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Decolux 70",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Decolux 70",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Decolux 80 +",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Decolux 80 +",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Decolux Blok 133",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Decolux Blok 133",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Duorail 133",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Duorail 137",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Duorail 160 +",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Duorail 160 S",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Duorail 173 +",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Duorail 173 S",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Duorail 181",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Duoslide 137",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Schuifraam",
+   "soort": "alias"
+  },
+  {
+   "serie": "EKO",
+   "leverancier": "Oknoplast",
+   "materiaal": "PVC",
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Ekosol Duorail",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Ferrolux 106",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Ferrolux 106",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Figo 80",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Figo 80",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Figo Blok 133",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Figo Blok 133",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Futura",
    "leverancier": "WnD",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Futura",
    "leverancier": "WnD",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Futura 70",
    "leverancier": "WnD",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Futura 70",
    "leverancier": "WnD",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Futurix",
+   "leverancier": "WnD",
+   "materiaal": "PVC",
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "Galandage 110",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "HST",
+   "leverancier": "Oknoplast",
+   "materiaal": "PVC",
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Holux +",
+   "leverancier": "Pierret",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Holux +",
+   "leverancier": "Pierret",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Holux 1",
+   "leverancier": "Beliworks",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Holux 1",
+   "leverancier": "Beliworks",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Holux 2",
+   "leverancier": "Beliworks",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Holux 2",
+   "leverancier": "Beliworks",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Holux 2",
+   "leverancier": "Beliworks",
+   "materiaal": "ALU",
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Holux 3",
+   "leverancier": "Beliworks",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Holux 3",
+   "leverancier": "Beliworks",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Holux 4",
+   "leverancier": "Beliworks",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Holux 4",
+   "leverancier": "Beliworks",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Holux 4",
+   "leverancier": "Beliworks",
+   "materiaal": "ALU",
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Holux 80 +",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Holux 80 +",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Holux 80 S",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Holux 80 S",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Holux S",
+   "leverancier": "Pierret",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Holux S",
+   "leverancier": "Pierret",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Impakt",
+   "leverancier": "Aluneo",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "alias"
   },
   {
    "serie": "Impakt",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Impakt",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Impakt",
+   "leverancier": "Gaume",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Impakt",
+   "leverancier": "Gaume",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Impakt",
+   "leverancier": "Gaume",
+   "materiaal": "PVC",
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Impakt 90 Moderne",
+   "leverancier": "Riche Menuiserie",
+   "materiaal": "HOUT",
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "Impakt 90 mm",
    "leverancier": "Riche Menuiserie",
    "materiaal": "HOUT",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Impakt I-plus",
+   "leverancier": "Aluhaus",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Impakt PLUS",
+   "leverancier": "Oknoplast",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Impakt PLUS",
+   "leverancier": "Oknoplast",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Impakt PLUS",
+   "leverancier": "Oknoplast",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Impakt plus",
+   "leverancier": "Aluhaus",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Impakt plus",
+   "leverancier": "Aluhaus",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Impakt plus",
+   "leverancier": "Aluneo",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "Impakt plus AH",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Impakt plus AN",
    "leverancier": "Aluneo",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Impakt plus AN",
    "leverancier": "Aluneo",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Impakt plus PVC",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Impakt plus PVC",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Klassiek 68",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Klassiek 88",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Klassiek Blok",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
   },
   {
    "serie": "Komfort",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Komfort",
+   "leverancier": "Gaume",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Komfort",
+   "leverancier": "Gaume",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Komfort",
+   "leverancier": "Gaume",
+   "materiaal": "PVC",
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Komfort",
+   "leverancier": "Riche Menuiserie",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Komfort",
+   "leverancier": "Riche Menuiserie",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Komfort 80 Moderne",
+   "leverancier": "Riche Menuiserie",
+   "materiaal": "HOUT",
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "Komfort 80 mm",
    "leverancier": "Riche Menuiserie",
    "materiaal": "HOUT",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort 80 mm",
    "leverancier": "Riche Menuiserie",
    "materiaal": "HOUT",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort 80 mm",
    "leverancier": "Riche Menuiserie",
    "materiaal": "HOUT",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort EVO",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort EVO",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Komfort I-plus",
+   "leverancier": "Aluhaus",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Komfort I-plus",
+   "leverancier": "Building Windows",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Komfort I-plus",
+   "leverancier": "Building Windows",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Komfort PLUS",
+   "leverancier": "Oknoplast",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Komfort PLUS",
+   "leverancier": "Oknoplast",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "Komfort Plus",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort Plus",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort Plus",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort Plus",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort Plus",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Komfort Plus",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Komfort iplus",
+   "leverancier": "Aluhaus",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "alias"
   },
   {
    "serie": "Koncept",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Koncept",
+   "leverancier": "Raamexpres",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Koncept",
+   "leverancier": "Raamexpres",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Koncept",
+   "leverancier": "Riche Menuiserie",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Koncept",
+   "leverancier": "Riche Menuiserie",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Koncept",
+   "leverancier": "Riche Menuiserie",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Koncept 60 Moderne",
+   "leverancier": "Riche Menuiserie",
+   "materiaal": "HOUT",
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "Koncept 60 mm",
    "leverancier": "Riche Menuiserie",
    "materiaal": "HOUT",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept 60 mm",
    "leverancier": "Riche Menuiserie",
    "materiaal": "HOUT",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept 60 mm",
    "leverancier": "Riche Menuiserie",
    "materiaal": "HOUT",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Koncept 68 Moderne",
+   "leverancier": "Raamexpres",
+   "materiaal": "HOUT",
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "Koncept 68 mm",
    "leverancier": "Raamexpres",
    "materiaal": "HOUT",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept 68 mm",
    "leverancier": "Raamexpres",
    "materiaal": "HOUT",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept 68 mm",
    "leverancier": "Raamexpres",
    "materiaal": "HOUT",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Koncept I-plus",
+   "leverancier": "Aluhaus",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Koncept I-plus",
+   "leverancier": "Aluhaus",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Koncept I-plus",
+   "leverancier": "Building Windows",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Koncept I-plus",
+   "leverancier": "Building Windows",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "Koncept Plus",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept Plus",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept Plus",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Koncept Plus",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Lignum 68 Klassiek",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Lignum 68 Klassiek",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Lignum 68 Modern",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Lignum 68 Modern",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Lignum 88 Klassiek",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Lignum 88 Klassiek",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Lignum 88 Klassiek",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Lignum 88 Modern",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Lignum 88 Modern",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Lignum 88 Modern",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Lignum Blok",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Lignum Blok",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Lignum Blok Klassiek",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Lignum Blok Modern",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Lignum Guillotine Klassiek",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Lignum Guillotine Modern",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "Lignum Slide 173",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Lignum Slide 173 Klassiek",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Schuifraam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Lignum Slide 173 Modern",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "Lignum Slide 213",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
-   "serie": "MDRN",
-   "leverancier": "Raamexpres",
+   "serie": "Lignum Slide 213 Klassiek",
+   "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Deur"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
-   "serie": "MDRN",
+   "serie": "Lignum Slide 213 Modern",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Luna Blok",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Luna blok",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Luna blok",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "MDRN Moderne",
    "leverancier": "Raamexpres",
    "materiaal": "HOUT",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "Masterglide duorail",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Masterglide duorail - Smalle chicane",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Masterglide monorail",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Masterglide monorail - Smalle chicane",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Mini-Slide 80",
    "leverancier": "WnD",
    "materiaal": "PVC",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Mini-Slide 96",
    "leverancier": "Profel",
    "materiaal": "PVC",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Minirail 88",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Minislide 88",
+   "leverancier": "Pierret",
+   "materiaal": "ALU",
+   "type": "Schuifraam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Modern 68",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Modern 88",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Modern Blok",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
   },
   {
    "serie": "Mono-Slide 140",
    "leverancier": "WnD",
    "materiaal": "PVC",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Monorail 142",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Monorail 173 +",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Monorail 173 S",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Monorail 181",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Monorail 185 +",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Monorail 185 S",
    "leverancier": "Pierret",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "PVC Blok",
+   "leverancier": "Oknoplast",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "PVC Blok",
+   "leverancier": "Oknoplast",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "PVC Ultraglide",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Paneel Frager",
    "leverancier": "Harinck - Frager",
    "materiaal": "PVC-ALU",
-   "type": "Varia"
+   "type": "Varia",
+   "soort": "reeks"
   },
   {
    "serie": "Panolux",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Vouwwand"
+   "type": "Vouwwand",
+   "soort": "reeks"
   },
   {
    "serie": "Panolux",
    "leverancier": "Solarlux Nederland",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Panolux",
    "leverancier": "Solarlux Nederland",
    "materiaal": "ALU",
-   "type": "Varia"
+   "type": "Varia",
+   "soort": "reeks"
   },
   {
    "serie": "Panolux",
    "leverancier": "Solarlux Nederland",
    "materiaal": "ALU",
-   "type": "Vouwwand"
+   "type": "Vouwwand",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Panolux Charme",
+   "leverancier": "Profel",
+   "materiaal": "ALU",
+   "type": "Vouwwand",
+   "soort": "alias"
+  },
+  {
+   "serie": "Prestige Blok",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Prestige blok",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Pure Blok",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Pure Blok",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Pure blok",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "Quinline74",
    "leverancier": "Schmidt",
    "materiaal": "PVC",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Quinline84",
    "leverancier": "Schmidt",
    "materiaal": "PVC",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
-   "serie": "RI ANTWERP",
-   "leverancier": "Riche Menuiserie",
-   "materiaal": "HOUT",
-   "type": "Deur"
+   "serie": "Retro Blok",
+   "leverancier": "Profel",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
-   "serie": "RI ANTWERP",
-   "leverancier": "Riche Menuiserie",
+   "serie": "Robus 68 Classique",
+   "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Raam"
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Robus 68 Classique",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Robus 68 Moderne",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Robus 68 Moderne",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Robus 88 Classique",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Robus 88 Classique",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Robus 88 Moderne",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Robus 88 Moderne",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Robus Bloc",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Robus Bloc",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Robus Royal",
+   "leverancier": "Different Doors",
+   "materiaal": "HOUT",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Robus Slide 173",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "Robus Slide 173 Monorail",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Robus Slide 213",
+   "leverancier": "Profel",
+   "materiaal": "HOUT",
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "RobusAlbud",
    "leverancier": "Albud",
    "materiaal": "HOUT",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "RobusAlbud",
    "leverancier": "Albud",
    "materiaal": "HOUT",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "RobusAlbud",
    "leverancier": "Albud",
    "materiaal": "HOUT",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "RobusRoyal",
    "leverancier": "Different Doors",
    "materiaal": "HOUT",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Rolluik",
    "leverancier": "Wilms",
    "materiaal": "PVC-ALU",
-   "type": "Varia"
+   "type": "Varia",
+   "soort": "reeks"
   },
   {
    "serie": "Sierluik",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Varia"
+   "type": "Varia",
+   "soort": "reeks"
   },
   {
    "serie": "Sierluik",
    "leverancier": "Profel",
    "materiaal": "HOUT",
-   "type": "Varia"
+   "type": "Varia",
+   "soort": "reeks"
+  },
+  {
+   "serie": "SlideS",
+   "leverancier": "Schmidt",
+   "materiaal": "PVC",
+   "type": "Schuifraam",
+   "soort": "alias"
+  },
+  {
+   "serie": "SlideS +",
+   "leverancier": "Schmidt",
+   "materiaal": "PVC",
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "Star 90",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Star 90",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Star90",
+   "leverancier": "Building Windows",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Star90",
+   "leverancier": "Building Windows",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "Steellook",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Steellook",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Steellook",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Steellook EVO",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Steellook EVO",
+   "leverancier": "Aluhaus",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Steellook plus",
+   "leverancier": "Aluhaus",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Steellook plus",
+   "leverancier": "Aluhaus",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Steellook plus",
+   "leverancier": "Aluneo",
+   "materiaal": "ALU",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Steellook plus",
+   "leverancier": "Aluneo",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "Steellook plus AH",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Steellook plus AN",
    "leverancier": "Aluneo",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Steellook plus AN",
    "leverancier": "Aluneo",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Steellook-EVO",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Tendance 70",
    "leverancier": "Profel",
    "materiaal": "PVC-ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Tendance 70",
    "leverancier": "Profel",
    "materiaal": "PVC-ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Tendance Mini Blok 87",
    "leverancier": "Profel",
    "materiaal": "PVC-ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Tendance Mini Blok 87",
    "leverancier": "Profel",
    "materiaal": "PVC-ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Tendance Prestige",
+   "leverancier": "Profel",
+   "materiaal": "PVC-ALU",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Tendance Pure",
+   "leverancier": "Profel",
+   "materiaal": "PVC-ALU",
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Tendance Retro",
+   "leverancier": "Profel",
+   "materiaal": "PVC-ALU",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "Trirail 214",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Ugo 70",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Ugo 70",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Ugo 84",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Ugo 84",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Ultraglide",
+   "leverancier": "Building Windows",
+   "materiaal": "ALU",
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Ultraglide Duorail",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Ultraglide Duorail (HST)",
    "leverancier": "Oknoplast",
    "materiaal": "PVC",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Ultraglide Monorail",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Ultraglide Trirail",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Unix",
+   "leverancier": "WnD",
+   "materiaal": "PVC",
+   "type": "Deur",
+   "soort": "alias"
+  },
+  {
+   "serie": "Unix",
+   "leverancier": "WnD",
+   "materiaal": "PVC",
+   "type": "Raam",
+   "soort": "alias"
   },
   {
    "serie": "Unix 70",
    "leverancier": "WnD",
    "materiaal": "PVC",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Unix 70",
    "leverancier": "WnD",
    "materiaal": "PVC",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Unix Mini-Slide",
+   "leverancier": "WnD",
+   "materiaal": "PVC",
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "VG Duorail",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "VG Duorail",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "VG Duorail (gefolierd)",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "VG Monorail",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "VG Monorail",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "VG Monorail (gefolierd)",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "VG Trirail",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "VG Trirail",
    "leverancier": "Building Windows",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "VG Trirail (gefolierd)",
    "leverancier": "Aluhaus",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "View & Glide Duorail AN",
    "leverancier": "Aluneo",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "View & Glide Monorail AN",
    "leverancier": "Aluneo",
    "materiaal": "ALU",
-   "type": "Schuifraam"
+   "type": "Schuifraam",
+   "soort": "reeks"
   },
   {
    "serie": "Zio 70",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Zio 70",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "alias"
+  },
+  {
+   "serie": "Zio 70",
+   "leverancier": "Profel",
+   "materiaal": "ALU",
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Zio 80 +",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Zio 80 +",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   },
   {
    "serie": "Zio 92 S",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
+  },
+  {
+   "serie": "Zio Mini-Slide",
+   "leverancier": "Profel",
+   "materiaal": "ALU",
+   "type": "Schuifraam",
+   "soort": "alias"
   },
   {
    "serie": "Zioblok",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Deur"
+   "type": "Deur",
+   "soort": "reeks"
   },
   {
    "serie": "Zioblok",
    "leverancier": "Profel",
    "materiaal": "ALU",
-   "type": "Raam"
+   "type": "Raam",
+   "soort": "reeks"
   }
  ]
 }

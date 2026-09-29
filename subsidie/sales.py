@@ -226,8 +226,6 @@ def _lees_generiek(tekst: str, gescand: bool, cfg: dict) -> dict:
         opmerkingen = [opm] if opm else []
         if not serie:
             opmerkingen.append("reeks niet herkend")
-        elif g and g.get("dubbelzinnig"):
-            opmerkingen.append(f"reeks '{serie}' bestaat bij {', '.join(g['alternatieven'])} — controleer leverancier")
         if not (b and h):
             opmerkingen.append("maten niet gevonden")
         eerste = next((l.strip() for l in blok.splitlines() if l.strip()), "")
@@ -315,10 +313,6 @@ def _lees_belisol(pdf: "pdfium.PdfDocument", paginas: list[str], cfg: dict) -> l
         opmerkingen = [opm] if opm else []
         if not reeks:
             opmerkingen.append("reeks niet gevonden")
-        elif not g:
-            opmerkingen.append(f"reeks '{reeks}' staat niet in de gamma-lijst — kies de leverancier")
-        elif g.get("dubbelzinnig"):
-            opmerkingen.append(f"reeks '{reeks}' bestaat bij {', '.join(g['alternatieven'])} — controleer leverancier")
         # panelen: alleen als de offerte ze noemt of de schets een 'p' (paneel) toont; verdeling uit schets + deelmaten
         up = _UP.search(tekst)
         paneel_m2 = None
@@ -421,8 +415,8 @@ def bereken(elementen: list[Element], klant: Optional[dict] = None, vestigingsco
             adviseur: Optional[dict] = None) -> dict:
     """vestiging/adviseur: gegevens uit de offerte; die gaan voor op de vestiging uit config.json."""
     cfg = copy.deepcopy(cfg or load_config())
-    # Indicatie per categorie: geen meldcodes zoeken (die volgen na de bestelling uit het thermisch rapport), zodat
-    # alle elementen van dezelfde categorie samen worden afgerond, ongeacht de leverancier.
+    # Indicatie per categorie: geen meldcodes zoeken en niet tonen (die volgen na de bestelling uit het thermisch
+    # rapport). Het tarief per m² hangt alleen af van de categorie, dus de leverancier is hier alleen informatief.
     cfg["leveranciers"] = {"systemen": {}, "trefwoorden": {}}
     cfg["meldcodes"] = {"regels": []}
     geldig = [e for e in elementen if e.breedte_mm and e.hoogte_mm]
@@ -437,8 +431,6 @@ def bereken(elementen: list[Element], klant: Optional[dict] = None, vestigingsco
     for e in elementen:
         if not (e.breedte_mm and e.hoogte_mm):
             meldingen.append(f"Element {e.nr} ({e.omschrijving or e.serie or 'zonder naam'}) heeft geen maten en telt niet mee.")
-        if not e.leverancier and e.vulling != "geen":
-            meldingen.append(f"Element {e.nr}: leverancier onbekend — het bedrag is berekend met het standaardtarief.")
     if not res["maatregelen"]:
         meldingen.append("Geen enkel element komt in aanmerking voor subsidie.")
 
