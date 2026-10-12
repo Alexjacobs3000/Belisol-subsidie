@@ -1,7 +1,7 @@
 {
 "bron": "Meldcodelijst Hoogrendementsglas - April 2026.xlsx",
-"geimporteerd": "2026-09-23",
-"aantal": 1925,
+"geimporteerd": "2026-10-12",
+"aantal": 1927,
 "items": [
 {
 "meldcode": "KA30588",
@@ -26951,6 +26951,34 @@
 "categorie_rvo": "Glas U <= 5,8",
 "categorie": "monument_glas_5_8",
 "woningtype": "Alleen monumentale woningen",
+"is_hoofdmeldcode": false
+},
+{
+"meldcode": "KA31762",
+"hoofdmeldcode": null,
+"merk": "Oknoplast",
+"model": "Isolerende deur Ud <= 1,0",
+"u": 1.0,
+"bedrag_enkel": 111.0,
+"bedrag_meerdere": 222.0,
+"bedrag_monument": 222.0,
+"categorie_rvo": "Isolerende deur Ud <= 1,0",
+"categorie": "deur_hoog",
+"woningtype": "Alle woningen",
+"is_hoofdmeldcode": false
+},
+{
+"meldcode": "KA31763",
+"hoofdmeldcode": null,
+"merk": "Oknoplast",
+"model": "Isolerende deur Ud <= 1,0",
+"u": 1.0,
+"bedrag_enkel": 111.0,
+"bedrag_meerdere": 222.0,
+"bedrag_monument": 222.0,
+"categorie_rvo": "Isolerende deur Ud <= 1,0",
+"categorie": "deur_hoog",
+"woningtype": "Alle woningen",
 "is_hoofdmeldcode": false
 }
 ]

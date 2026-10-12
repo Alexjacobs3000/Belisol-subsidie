@@ -94,8 +94,10 @@
   "meldcodes": {
     "_uitleg": "Handmatige meldcodes, alleen gebruikt als de RVO-meldcodelijst (subsidie/data/meldcodelijst.json) geen passende code geeft. Een regel met 'u_waarde' matcht exact (± 0,005); met 'u_max' (en optioneel 'u_min') een bereik. 'systeem' = '*' geldt voor alle systemen.",
     "regels": [
-      {"maatregel": "deur", "systeem": "CERTIX 116", "u_waarde": 0.97, "meldcode": "KA31763",
-       "bron": "infomail Bisheshar 2063 (isolerende achterdeur, Ud 0,97)"}
+      {"maatregel": "deur_hoog", "systeem": "CERTIX 116", "u_max": 1.0, "meldcode": "KA31763",
+       "bron": "RVO-meldcodelijst: Oknoplast isolerende deur Ud <= 1,0 (Certix 116, bevestigd via infomail Bisheshar 2063)"},
+      {"maatregel": "deur_hoog", "systeem": "CERTIX 82", "u_max": 1.0, "meldcode": "KA31762",
+       "bron": "RVO-meldcodelijst: Oknoplast isolerende deur Ud <= 1,0 (Certix 82)"}
     ]
   },
 
