@@ -1,9 +1,9 @@
 """
 Belisol ISDE-subsidieverwerker — webapp (Streamlit), met twee modules (switch bovenaan):
 
-- Administratie: de gebruiker uploadt het Uw-rapport van de leverancier (en, behalve bij Certix, de bestelling),
-  controleert flens en klantgegevens, en downloadt het subsidie-overzicht voor de klant (PDF).
-  Bij Certix vervalt de controle van de bestelling: de maat zonder aanslag komt uit de tekening in het Uw-rapport.
+- Administratie: de gebruiker uploadt het thermisch rapport (Uw-rapport) van de leverancier, vult de klantgegevens
+  in en downloadt het subsidie-overzicht voor de klant (PDF). Het uploaden en controleren van de bestelling (flens)
+  staat uit via config.json → administratie → bestelling_controle (zie CLAUDE.md → 'Uitgeschakelde functie').
 - Sales: de verkoper uploadt een offerte; de app herkent de elementen (reeks → leverancier, maten, vulling),
   de verkoper controleert ze en downloadt een subsidie-indicatie voor de klant (PDF).
 
@@ -160,6 +160,9 @@ def opnieuw_knop(label: str, key: str, mod: str, **kw):
             st.rerun()
 
 
+# Bestelling uploaden + flens bevestigen (stap 'Bestelling controleren'): uitgeschakeld, zie config.json → administratie
+BESTELLING_CONTROLE = bool(load_config().get("administratie", {}).get("bestelling_controle", False))
+
 # ---------------------------------------------------------------- kop
 c1, c2, c3 = st.columns([1, 7, 2], vertical_alignment="center")
 with c1:
@@ -167,8 +170,9 @@ with c1:
 with c2:
     if M == "adm":
         st.title("Subsidie-overzicht ISDE")
-        st.markdown("<span class='muted'>Administratie — upload het Uw-rapport van de leverancier en (behalve bij Certix) "
-                    "de bestelling. De app berekent de subsidiegegevens en maakt het overzicht voor de klant.</span>",
+        st.markdown("<span class='muted'>Administratie — upload het thermisch rapport (Uw-rapport) van de leverancier"
+                    + (" en, behalve bij Certix, de bestelling" if BESTELLING_CONTROLE else "")
+                    + ". De app berekent de subsidiegegevens en maakt het overzicht voor de klant.</span>",
                     unsafe_allow_html=True)
     else:
         st.title("Subsidie-indicatie ISDE")
@@ -199,15 +203,22 @@ with st.sidebar:
 # ================================================================ ADMINISTRATIE
 def pagina_administratie():
     # ---------------------------------------------------------------- 1. uploads
-    step("Documenten uploaden")
-    u1, u2 = st.columns(2)
-    with u1:
-        f_best = st.file_uploader("Bestelling / definitieve opmeting (PDF) — niet nodig bij Certix", type=["pdf"], key=f"best_{dossier}")
-    with u2:
-        f_uw = st.file_uploader("Uw-rapport / thermisch rapport leverancier (PDF)", type=["pdf"], key=f"uw_{dossier}")
+    if BESTELLING_CONTROLE:
+        step("Documenten uploaden")
+        u1, u2 = st.columns(2)
+        with u1:
+            f_best = st.file_uploader("Bestelling / definitieve opmeting (PDF) — niet nodig bij Certix", type=["pdf"], key=f"best_{dossier}")
+        with u2:
+            f_uw = st.file_uploader("Uw-rapport / thermisch rapport leverancier (PDF)", type=["pdf"], key=f"uw_{dossier}")
+    else:
+        step("Thermisch rapport uploaden")
+        f_best = None
+        f_uw = st.file_uploader("Uw-rapport / thermisch rapport van de leverancier (PDF) — Certix of Profel",
+                                type=["pdf"], key=f"uw_{dossier}")
 
     if not f_uw:
-        st.info("Upload het **Uw-rapport** (en, behalve bij Certix, de bestelling) om verder te gaan.")
+        st.info("Upload het **thermisch rapport** (Uw-rapport)" + (" (en, behalve bij Certix, de bestelling)" if BESTELLING_CONTROLE else "")
+                + " om verder te gaan.")
         return
 
 
@@ -220,8 +231,9 @@ def pagina_administratie():
 
     # Certix: de maat zonder aanslag staat in de schets van het Uw-rapport (zwarte maat) -> bestelling controleren is niet nodig
     is_certix = bool(report.posities) and all(p.systeem.upper().startswith("CERTIX") for p in report.posities)
+    bestelling_nodig = BESTELLING_CONTROLE and not is_certix
 
-    if not f_best and not is_certix:
+    if not f_best and bestelling_nodig:
         st.info("Dit is geen Certix-rapport: upload ook de **bestelling** om de flens te controleren.")
         return
 
@@ -239,11 +251,15 @@ def pagina_administratie():
         any(k.split()[0] in ("101.331", "101.333") or "aanslag" in k.lower() for k in p.materialen.get("KADER", []))
         for p in report.posities)
 
-    # ---------------------------------------------------------------- 2. controle bestelling (niet bij Certix)
-    if is_certix:
-        # flens volgt het rapport; de maat zonder aanslag wordt uit de schets gelezen (zwarte maat)
+    # ---------------------------------------------------------------- 2. controle bestelling (uitgeschakeld; alleen als
+    # config.json → administratie → bestelling_controle aan staat en het geen Certix-rapport is)
+    if not bestelling_nodig:
+        # flens volgt het rapport (Certix: maat zonder aanslag uit de tekening; Profel: maten volgens het rapport)
         flens_bevestigd, flens_mm = None, None
-        st.caption(f"Certix-rapport (order `{report.ordernummer}`, {len(report.posities)} posities): de maat zonder aanslag wordt uit de tekening gelezen (zwarte maat) — controle van de bestelling is niet nodig.")
+        uitleg = ("de maat zonder aanslag wordt uit de tekening gelezen (zwarte maat)" if is_certix
+                  else "maten en oppervlakte volgens het thermisch rapport")
+        st.caption(f"{report.leverancier or 'Rapport'} (order `{report.ordernummer or '–'}`, {len(report.posities)} posities"
+                   + (f", besteld door {report.besteller}" if report.besteller else "") + f"): {uitleg}.")
     else:
         step("Bestelling controleren")
         b1, b2 = st.columns([3, 2])
@@ -333,13 +349,15 @@ def pagina_administratie():
          for m in result["maatregelen"]],
         hide_index=True, use_container_width=True)
 
+    met_flens = any(p["flens"]["aanwezig"] for p in result["posities"])  # flenskolommen alleen als er een flens speelt
     with st.expander("Detail per positie"):
         st.dataframe(
             [{"Pos.": p["positie"], "Omschrijving": p["omschrijving"], "Type": p["type"],
-              "B × H netto": f"{nl(p['flens']['netto_breedte_mm'], 0)} × {nl(p['flens']['netto_hoogte_mm'], 0)}",
-              "Maat uit": p["flens"].get("maat_bron", "tabel"),
+              "B × H": f"{nl(p['flens']['netto_breedte_mm'], 0)} × {nl(p['flens']['netto_hoogte_mm'], 0)}",
+              **({"Maat uit": p["flens"].get("maat_bron", "tabel")} if met_flens else {}),
               "m²": nl(p["oppervlakte_m2"]), "Ug": nl(p["ug"]), "Uw": nl(p["uw"]),
-              "Flens": p["flens"]["toegepast"], "Maatregel": p["categorie"] or "niet subsidiabel"}
+              **({"Flens": p["flens"]["toegepast"]} if met_flens else {}),
+              "Maatregel": p["categorie"] or "niet subsidiabel"}
              for p in result["posities"]], hide_index=True, use_container_width=True)
 
     bestandsnaam = f"Subsidie-overzicht {result['klant']['naam'] or 'klant'} {result['klant']['huisnummer'] or ''}".strip()

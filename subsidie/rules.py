@@ -82,11 +82,19 @@ def glass_class(p: Position, cfg: dict) -> tuple[Optional[str], Optional[float]]
     return None, ug
 
 
-def flens_info(p: Position, cfg: dict, bevestigd: Optional[bool] = None, mm_override: Optional[float] = None) -> dict:
+def flens_info(p: Position, cfg: dict, bevestigd: Optional[bool] = None, mm_override: Optional[float] = None,
+               actief: bool = True) -> dict:
     """Bepaalt of het kader een flens (aanslag/T-kader) heeft en berekent de netto maat.
 
     In NL telt de flens niet mee voor de subsidie-m²: aan alle zijden aftrekken.
+    actief=False (formaat in config.json → flens → uitgeschakeld_voor_formaten): geen flensberekening, de maten
+    uit het rapport gelden zoals ze zijn.
     """
+    if not actief:
+        return {"aanwezig": False, "volgens_rapport": False, "bron": "flensberekening uitgeschakeld voor dit rapportformaat",
+                "mm_per_zijde": None, "toegepast": "maat volgens rapport (aanslag niet berekend)", "onzeker": False,
+                "maat_bron": "tabel", "tekening_onleesbaar": False, "netto_breedte_mm": p.breedte_mm,
+                "netto_hoogte_mm": p.hoogte_mm, "netto_m2_per_stuk": p.oppervlakte_m2}
     fc = cfg.get("flens", {})
     sc = fc.get("systemen", {}).get(p.systeem.upper(), {})
     std = fc.get("standaard", {})
@@ -271,8 +279,9 @@ def evaluate(report: Report, klant: Optional[dict] = None, cfg: Optional[dict] =
             b["u_waarden"].append(u)
 
     flens_conflict: list[int] = []
+    flens_actief = report.formaat not in cfg.get("flens", {}).get("uitgeschakeld_voor_formaten", [])
     for p in report.posities:
-        fl = flens_info(p, cfg, klant.get("flens_bevestigd"), klant.get("flens_mm"))
+        fl = flens_info(p, cfg, klant.get("flens_bevestigd"), klant.get("flens_mm"), actief=flens_actief)
         if klant.get("flens_bevestigd") is not None and fl["volgens_rapport"] != klant["flens_bevestigd"]:
             flens_conflict.append(p.positie)
         opp = r2(fl["netto_m2_per_stuk"] * p.stuks)

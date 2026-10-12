@@ -36,12 +36,15 @@ samples/                voorbeeld Bisheshar 2063 (invoer, JSON en PDF)
 
 `streamlit_app.py` is de webversie voor collega's:
 
-1. upload de **bestelling** (definitieve opmeting) én het **Uw-rapport** van de leverancier;
-2. controleer de bestelling (pagina's worden getoond) en bevestig of er een flens/aanslag is.
-   **Bij Certix wordt deze stap overgeslagen** (en is de bestelling niet nodig): de maat zonder
-   aanslag wordt uit de tekening in het Uw-rapport gelezen;
-3. vul de klantgegevens aan;
-4. bekijk de uitkomst en waarschuwingen en **download het subsidie-overzicht (PDF)** (en optioneel de JSON).
+1. upload het **thermisch rapport (Uw-rapport)** van de leverancier (Certix of Profel);
+2. vul de klantgegevens aan;
+3. bekijk de uitkomst en waarschuwingen en **download het subsidie-overzicht (PDF)** (en optioneel de JSON).
+
+Maten: Certix → maat zonder aanslag uit de tekening (zwarte maat); Profel → maten en oppervlakte volgens het rapport
+(geen aanslag/flens berekend).
+
+*Uitgeschakeld (okt 2026):* de bestelling (definitieve opmeting) uploaden en de flens/aanslag bevestigen in een stap
+"Bestelling controleren". Weer aanzetten: zie `CLAUDE.md` → *Uitgeschakelde functie*.
 
 Lokaal: `streamlit run streamlit_app.py`
 

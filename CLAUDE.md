@@ -11,9 +11,8 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
 - `streamlit_app.py` — webapp (Streamlit Cloud) met switch bovenaan: **Administratie** en **Sales**. Beide pagina's
   worden altijd getekend (de andere verborgen via CSS) zodat uploads blijven staan; sessiesleutels per module
   (`k("…")` → `adm_…`/`sal_…`); in de pagina's `return` i.p.v. `st.stop()`.
-- Administratie: gebruiker uploadt **bestelling** (definitieve opmeting, vaak
-  handgeschreven scan) én **Uw-rapport**; bevestigt flens; vult klantgegevens in; downloadt PDF (+ JSON).
-  Bij Certix vervalt stap 2 (bestelling controleren) en is de bestelling optioneel (maat komt uit de tekening).
+- Administratie: gebruiker uploadt alleen het **thermisch rapport / Uw-rapport** (Certix of Profel), vult klantgegevens
+  in en downloadt PDF (+ JSON). Bestelling uploaden + flens bevestigen staat UIT (zie *Uitgeschakelde functie*).
 - Sales (`subsidie/sales.py`, `templates/sales.html`): offerte → elementen (reeks → leverancier via
   `subsidie/gammas.py` + `data/gammas.json`, maten, aantal, vulling) → bewerkbare tabel → zelfde `rules.evaluate`
   (zonder meldcodes, tarief per categorie) → PDF "Subsidie-indicatie". Gedeelde huisstijl: `templates/_stijl.html`.
@@ -67,10 +66,25 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
   afnemer in adresblok (bv. 'DL9752 Belisol Tilburg'); geen klantnaam/referentie; per positie Systeem (bv. 'PVC P8000 - LUMO 80mm',
   'ALU P4000NT - FUGOSLIDE'), kaderprofiel, Afmeting B * H, 'Oppervlak incl profielen', Uw en glas met Ug. Schuifpuien = glas.
 
+## Uitgeschakelde functie: bestelling controleren / flens bevestigen (uit sinds okt 2026, besluit Alex)
+Alex: voor Profel is de bestelling niet meer nodig en wordt geen rekening meer gehouden met de aanslag. De code staat er
+nog volledig in en is met twee instellingen in `subsidie/config.json` weer aan te zetten:
+1. `administratie → bestelling_controle: true` — Administratie toont weer twee uploadvelden (bestelling + Uw-rapport)
+   en, voor niet-Certix-rapporten, stap **"Bestelling controleren"**: pagina's van de bestelling (`subsidie/bestelling.py`,
+   ook scans), radio "Staat er op de bestelling een flens (aanslag) aangeduid?" (voorgesteld uit het kaderprofiel) en
+   "Flensbreedte per zijde (mm)". De keuze gaat als `klant["flens_bevestigd"]` / `klant["flens_mm"]` naar
+   `rules.evaluate` → `flens_info()`; bij afwijking van het rapport volgt een waarschuwing. (Code: `streamlit_app.py`,
+   `pagina_administratie`, blok `if BESTELLING_CONTROLE` / `bestelling_nodig`.)
+2. `flens → uitgeschakeld_voor_formaten`: haal `"profel_thermisch_v1"` weg — dan berekent `flens_info()` voor Profel
+   weer een flens (kaderartikels/trefwoorden in `flens → systemen/standaard`; flensbreedte per systeem invullen,
+   anders telt het als 'onzeker' met waarschuwing). Zolang het formaat in de lijst staat: maat = rapportmaat.
+Het klantrapport en de app tonen flenskolommen/-tekst ("netto", "de flens telt niet mee") alleen als er bij een
+positie een flens speelt (Certix: maat zonder aanslag uit de tekening — dat blijft altijd aan).
+
 ## Open punten
 - Flens per zijde: nu 4 zijden gelijk bij formaten met maten mét flens. Nodig: regels per zijde (geen aftrek
   onderkant deur met dorpel/slijtkader, koppelnaad/"afgefreesde aanslag", "frame stomp") + Profel-voorbeeld.
-- Profel: flensbreedte T-kader en een rapport met deur nog niet gezien. Oknoplast-eigen rapport: nog geen voorbeeld.
+- Profel: een rapport met deur nog niet gezien (flens/aanslag wordt voor Profel bewust niet berekend). Oknoplast-eigen rapport: nog geen voorbeeld.
 - Monumentbedrag triple/deur hoog en monument met één maatregel (HR++ mogelijk €46) laten bevestigen.
 
 ## Testen

@@ -108,11 +108,12 @@ Bedragen volgens de RVO-meldcodelijst{% if meldcodelijst.bron %} ({{ meldcodelij
 
 <!-- ============================ PAGINA 2 ============================ -->
 <h2 class="section">Overzicht per element</h2>
-<p class="muted" style="font-size:8.5pt">Waarden uit het thermisch rapport van de fabrikant. Netto maten: de flens (aanslag) telt niet mee.</p>
+{% set met_flens = posities|selectattr("flens.aanwezig")|list %}
+<p class="muted" style="font-size:8.5pt">Waarden uit het thermisch rapport van de fabrikant.{% if met_flens %} Netto maten: de flens (aanslag) telt niet mee.{% endif %}</p>
 <table>
   <thead>
     <tr>
-      <th></th><th>Pos.</th><th>Omschrijving</th><th class="num">B × H netto (mm)</th><th class="num">m²</th>
+      <th></th><th>Pos.</th><th>Omschrijving</th><th class="num">B × H{% if met_flens %} netto{% endif %} (mm)</th><th class="num">m²</th>
       <th class="num">Ug</th><th class="num">Uw</th><th>Maatregel</th>
     </tr>
   </thead>

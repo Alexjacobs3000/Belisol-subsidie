@@ -52,8 +52,14 @@
     "heuristiek_max_breedte_mm": 1250
   },
 
+  "administratie": {
+    "_uitleg": "bestelling_controle: true = in Administratie ook de bestelling (definitieve opmeting) uploaden en in stap 'Bestelling controleren' de flens/aanslag bevestigen (incl. flensbreedte) voor rapporten die niet van Certix zijn. Uitgezet in okt 2026 (Alex): niet meer nodig. Zie CLAUDE.md → 'Uitgeschakelde functie'.",
+    "bestelling_controle": false
+  },
+
   "flens": {
-    "_uitleg": "In Nederland telt de flens (aanslag / aanslagprofiel / T-kader) niet mee: die wordt aan alle zijden van de maatvoering afgetrokken. Per systeem staat hier welke kaderprofielen een flens hebben, hoe breed die is en of het leveranciersrapport de maten al zonder flens geeft ('rapportmaten_zonder_flens'). Certix ('maat_uit_tekening'): in de schets van het Uw-rapport is de zwarte maat die het dichtst bij het element staat de maat zonder aanslag (groen = met aanslag). Die zwarte maat wordt via OCR gelezen en altijd gebruikt; lukt dat niet, dan de tabelmaat met een waarschuwing.",
+    "uitgeschakeld_voor_formaten": ["profel_thermisch_v1"],
+    "_uitleg": "In Nederland telt de flens (aanslag / aanslagprofiel / T-kader) niet mee: die wordt aan alle zijden van de maatvoering afgetrokken. Per systeem staat hier welke kaderprofielen een flens hebben, hoe breed die is en of het leveranciersrapport de maten al zonder flens geeft ('rapportmaten_zonder_flens'). Certix ('maat_uit_tekening'): in de schets van het Uw-rapport is de zwarte maat die het dichtst bij het element staat de maat zonder aanslag (groen = met aanslag). Die zwarte maat wordt via OCR gelezen en altijd gebruikt; lukt dat niet, dan de tabelmaat met een waarschuwing. 'uitgeschakeld_voor_formaten': voor deze rapportformaten wordt geen flens/aanslag berekend (Profel sinds okt 2026: maten volgens het rapport); formaat weghalen om de flensberekening weer aan te zetten.",
     "systemen": {
       "CERTIX 116": {
         "flens_kaderartikels": ["101.331", "101.333"],
