@@ -62,7 +62,7 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
   (`config.json → vestigingen → trefwoorden`): BeliNijmegen B.V. KVK 97595020, BeliTilburg B.V. KVK 22062177 (bevestigd door Alex).
 - Certix-deuren (Ud ≤ 1,0): Certix 116 → KA31763, Certix 82 → KA31762 (Oknoplast "Isolerende deur Ud <= 1,0", in de
   RVO-lijst sinds okt 2026; de lijst zegt niet welke code bij welk systeem hoort — 116 = KA31763 volgens infomail
-  Bisheshar, 82 = KA31762 per eliminatie). Regels in `config.json → meldcodes`.
+  Bisheshar, 82 = KA31762, beide bevestigd door Alex). Regels in `config.json → meldcodes`.
 - Profel thermisch rapport (`profel_thermisch_v1` in parser.py): groot watermerk 'PROFEL' wordt weggefilterd (tekens > 40 pt);
   afnemer in adresblok (bv. 'DL9752 Belisol Tilburg'); geen klantnaam/referentie; per positie Systeem (bv. 'PVC P8000 - LUMO 80mm',
   'ALU P4000NT - FUGOSLIDE'), kaderprofiel, Afmeting B * H, 'Oppervlak incl profielen', Uw en glas met Ug. Schuifpuien = glas.
