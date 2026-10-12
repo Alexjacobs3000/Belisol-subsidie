@@ -223,6 +223,27 @@ def rates_for(cat: str, oud: bool, cfg: dict) -> dict:
     return {"enkel": e, "meerdere": e * 2, "monument": None}
 
 
+def find_vestiging(report: Report, cfg: dict, override: Optional[str] = None) -> tuple[Optional[str], dict]:
+    """Vestiging via (1) handmatige keuze, (2) code in de referentie, (3) trefwoord in besteller/adresblok."""
+    vs = {k: v for k, v in cfg["vestigingen"].items() if not k.startswith("_")}
+    code = None
+    if override and override in vs:
+        code = override
+    elif report.vestigingscode and report.vestigingscode in vs:
+        code = report.vestigingscode
+    else:
+        hay = " ".join(x for x in [report.vestiging_tekst, report.besteller, report.referentie] if x).lower()
+        hay_compact = hay.replace(" ", "")
+        for k, v in vs.items():
+            if any(t.lower() in hay or t.lower().replace(" ", "") in hay_compact for t in v.get("trefwoorden", [])):
+                code = k
+                break
+    vest = dict(vs[code] if code else cfg["vestigingen"]["_standaard"])
+    vest.pop("trefwoorden", None)
+    vest["code"] = code
+    return code, vest
+
+
 def evaluate(report: Report, klant: Optional[dict] = None, cfg: Optional[dict] = None) -> dict:
     cfg = cfg or load_config()
     klant = dict(klant or {})
@@ -391,13 +412,12 @@ def evaluate(report: Report, klant: Optional[dict] = None, cfg: Optional[dict] =
         warnings.append(f"Totaal geïsoleerd oppervlak {nl(totaal_m2)} m² is lager dan het minimum van {nl(min_m2,0)} m².")
 
     # ---- vestiging / klant ------------------------------------------------
-    vcode = report.vestigingscode or ""
-    vest = dict(cfg["vestigingen"].get(vcode) or cfg["vestigingen"]["_standaard"])
-    vest["code"] = vcode
-    if vcode not in cfg["vestigingen"]:
-        warnings.append(f"Vestigingscode '{vcode}' niet gevonden in config.json — KVK-nummer en contactgegevens ontbreken.")
-    if not vest.get("kvk"):
-        warnings.append("KVK-nummer van de vestiging ontbreekt.")
+    vcode, vest = find_vestiging(report, cfg, klant.get("vestiging"))
+    if not vcode:
+        warnings.append("Belisol-vestiging niet herkend in het rapport (referentie/besteller) — KVK-nummer en contactgegevens ontbreken. "
+                        "Voeg de vestiging of een trefwoord toe in config.json → vestigingen.")
+    elif not vest.get("kvk"):
+        warnings.append(f"KVK-nummer van vestiging {vest.get('weergavenaam')} ontbreekt in config.json.")
 
     naam = klant.get("naam") or report.klantnaam
     if klant.get("naam") and report.klantnaam and klant["naam"].split()[-1].lower() != report.klantnaam.lower():
@@ -412,6 +432,14 @@ def evaluate(report: Report, klant: Optional[dict] = None, cfg: Optional[dict] =
         product = po["deur"]
     else:
         product = po["triple_glas"] if any(m["code"] == "triple_glas" for m in maatregelen) else po["hr_plus_plus_glas"]
+    # materiaal en schuifpui uit de systeemnaam (bv. 'ALU P4000NT - FUGOSLIDE', 'PVC P8000 - LUMO')
+    systemen_txt = " ".join(p.systeem for p in report.posities).upper()
+    if systemen_txt and "PVC" not in systemen_txt and re.search(r"\bALU", systemen_txt):
+        product = product.replace("PVC", "aluminium")
+    elif re.search(r"\bALU", systemen_txt) and "PVC" in systemen_txt:
+        product = product.replace("PVC", "PVC en aluminium")
+    if report.posities and all(re.search(r"SLIDE|SCHUIF|\bHST\b|LIFT", p.systeem.upper()) for p in report.posities):
+        product = re.sub(r"raamkozijnen", "schuifpui", product)
 
     systemen = sorted({p.systeem for p in report.posities})
     result = {

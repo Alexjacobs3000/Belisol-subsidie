@@ -164,7 +164,7 @@ Bedragen volgens de RVO-meldcodelijst{% if meldcodelijst.bron %} ({{ meldcodelij
     <h2>Zo vraagt u aan</h2>
     <ol class="steps">
       <li><b>Na de montage</b> — ga naar rvo.nl/isde (woningeigenaren) en log in met DigiD. U heeft tot 24 maanden na montage de tijd.</li>
-      <li><b>Vul uw gegevens in</b> en kies glas-, kozijnpaneel- of deurisolatie. Neem de gegevens van pagina 1 over.</li>
+      <li><b>Vul uw gegevens in</b> en kies glas-, kozijnpaneel- of deurisolatie. Neem de gegevens uit “Gegevens voor uw aanvraag” over.</li>
       <li><b>Upload uw bewijsstukken</b>: factuur, betaalbewijs en foto's.</li>
       <li><b>Controleer en verstuur.</b> RVO beslist doorgaans binnen 8 weken.</li>
     </ol>
@@ -186,7 +186,7 @@ Bedragen volgens de RVO-meldcodelijst{% if meldcodelijst.bron %} ({{ meldcodelij
   * Richtbedragen zijn een indicatie op basis van de RVO-meldcodelijst en de actuele tarieven
   (oppervlakte afgerond op hele m²; ≥ 0,50 naar boven). Aan deze bedragen kunnen geen rechten worden ontleend; RVO stelt het definitieve bedrag vast.
   Minimaal {{ nl(totaal.minimum_m2, 0) }} m², maximaal {{ nl(totaal.maximum_m2, 0) }} m² per aanvraag.
-  Meer info: {{ rvo_link }} · Vragen? Uw Belisol-adviseur helpt u graag: {{ vestiging.telefoon }} · {{ vestiging.email }}
+  Meer info: {{ rvo_link }} · Vragen? Uw Belisol-adviseur helpt u graag{% if contact %}: {{ contact }}{% endif %}.
 </div>
 
 </body>

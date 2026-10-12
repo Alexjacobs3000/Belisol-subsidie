@@ -188,7 +188,7 @@ with st.sidebar:
     st.caption(f"Meldcodelijst: {lijst.get('bron') or 'niet geladen'}"
                + (f" ({lijst.get('aantal')} codes)" if lijst.get("aantal") else ""))
     if M == "adm":
-        st.caption("Ondersteund: Uw-rapport Certix (Oknoplast). Profel/Oknoplast-formaten volgen.")
+        st.caption("Ondersteund: Uw-rapport Certix (Oknoplast) en thermisch rapport Profel.")
     else:
         g = gammas.load()
         st.caption(f"Gamma's: {len(gammas.series())} reeksen van {len(gammas.leveranciers())} leveranciers"
@@ -254,7 +254,9 @@ def pagina_administratie():
                     with t:
                         st.image(img, use_container_width=True)
         with b2:
-            st.markdown(f"**Uw-rapport**: order `{report.ordernummer}` · referentie `{report.referentie}`")
+            st.markdown(f"**{report.leverancier or 'Rapport'}**: order `{report.ordernummer or '–'}`"
+                        + (f" · referentie `{report.referentie}`" if report.referentie else "")
+                        + (f" · besteld door **{report.besteller}**" if report.besteller else ""))
             st.markdown(f"Systeem: **{', '.join(sorted({p.systeem for p in report.posities}))}** · {len(report.posities)} posities")
             if best["gescand"]:
                 st.caption("De bestelling is een scan: controleer de gegevens hieronder visueel.")

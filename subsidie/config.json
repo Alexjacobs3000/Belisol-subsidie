@@ -112,15 +112,28 @@
   },
 
   "vestigingen": {
+    "_uitleg": "Vestiging wordt herkend via de vestigingscode in de referentie (bv. 'C26 BNNIM ...') of via een trefwoord in het rapport (besteller/adresblok, bv. 'BELINIJMEGEN BV' of 'DL9752 Belisol Tilburg'). KVK-nummers bevestigd door Alex (okt 2026).",
     "BNNIM": {
       "naam": "BeliNijmegen B.V.",
       "weergavenaam": "Belisol Nijmegen",
-      "kvk": "22062177",
+      "kvk": "97595020",
       "adres": "Kerkenbos 1327-1329",
       "postcode_plaats": "6546 BG Nijmegen",
       "telefoon": "+31 (0)24 781 00 19",
       "email": "subsidie.nijmegen@belisol.com",
-      "website": "www.belisol.nl"
+      "website": "www.belisol.nl",
+      "trefwoorden": ["belinijmegen", "beli nijmegen", "belisol nijmegen"]
+    },
+    "BNTIL": {
+      "naam": "BeliTilburg B.V.",
+      "weergavenaam": "Belisol Tilburg",
+      "kvk": "22062177",
+      "adres": "Jules Verneweg 21-14",
+      "postcode_plaats": "5015 BE Tilburg",
+      "telefoon": "+31 (0)13 513 62 02",
+      "email": "",
+      "website": "www.belisol.nl",
+      "trefwoorden": ["belitilburg", "beli tilburg", "belisol tilburg"]
     },
     "_standaard": {
       "naam": "Belisol",

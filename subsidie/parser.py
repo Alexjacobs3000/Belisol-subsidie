@@ -83,6 +83,8 @@ class Report:
     rapportdatum: Optional[str]
     besteller: Optional[str]
     posities: list[Position]
+    leverancier: Optional[str] = None
+    vestiging_tekst: Optional[str] = None  # tekst waaruit de Belisol-vestiging herkend wordt
 
     def to_dict(self, include_drawings: bool = False) -> dict:
         d = asdict(self)
@@ -307,12 +309,91 @@ def parse_uw_rapport(pdf: pdfplumber.PDF, text: str) -> Report:
         rapportdatum=date.group(1) if date else None,
         besteller=besteller.group(1).strip() if besteller else None,
         posities=posities,
+        leverancier="Certix (Oknoplast)",
+        vestiging_tekst=" ".join(x for x in [reference, besteller.group(1) if besteller else None] if x),
         **_parse_reference(reference),
+    )
+
+
+# --------------------------------------------------------------------------
+# Formaat 2: Profel 'Thermisch rapport volgens ISO 10077-1/2'
+# --------------------------------------------------------------------------
+
+def _zonder_watermerk(page):
+    """Profel-rapporten hebben een groot watermerk ('PROFEL'); die tekens weglaten."""
+    return page.filter(lambda o: o.get("object_type") != "char" or o.get("size", 0) < 40)
+
+
+def parse_profel(pdf: pdfplumber.PDF) -> Report:
+    pages = [_zonder_watermerk(p) for p in pdf.pages]
+    text = "\n".join(p.extract_text() or "" for p in pages)
+
+    kop = re.search(r"ISO 10077-1/2\s*\n\s*(\d{6,}/\d+)\s*\n\s*(\d{2}-\d{2}-\d{4})", text)
+    order = kop.group(1) if kop else None
+    datum = None
+    if kop:
+        d, m, y = kop.group(2).split("-")
+        datum = f"{y}-{m}-{d}"
+    afnemer = re.search(r"^(?:[A-Z]{2}\d+\s+)?(Belisol[^\n]*|Beli[A-Za-z]+[^\n]*)$", text, re.M)
+
+    blokken = re.split(r"^Positie\s+(\d+)\b.*$", text, flags=re.M)
+    posities: list[Position] = []
+    for i in range(1, len(blokken), 2):
+        nr, blok = int(blokken[i]), blokken[i + 1]
+        blok = blok.split("Samenvatting thermisch")[0]
+        g = lambda pat: (re.search(pat, blok, re.M) or [None, None])[1]
+        stuks = int(g(r"^Aantal\s+(\d+)") or 1)
+        systeem = (g(r"^Systeem\s+(.+)$") or "").strip()
+        kader = (g(r"Referentie kaderprofiel\s*:\s*(\S+)") or "").strip()
+        afm = re.search(r"^Afmeting\s+" + NUM + r"\s*\*\s*" + NUM, blok, re.M)
+        breedte, hoogte = (_f(afm.group(1)), _f(afm.group(2))) if afm else (None, None)
+        opp = _f(g(r"Oppervlak incl profielen\s*:\s*" + NUM))
+        uw = _f(g(r"Uw-waarde berekening[^=]*=\s*" + NUM))
+        ruiten = []
+        for m in re.finditer(r"^\d{2}\.\d{2}:\s*(.+?)\s+Ug\s*" + NUM, blok, re.M | re.S):
+            volledig = re.sub(r"\s+", " ", m.group(1)).strip()
+            comp = re.split(r"\s-\s", volledig)[0].strip()
+            segs = comp.split("/")
+            ruiten.append(GlassPane(aantal=1, samenstelling=comp, ug=_f(m.group(2)), hoogte_mm=None,
+                                    breedte_mm=None, oppervlakte_m2=None, aantal_bladen=(len(segs) + 1) // 2))
+        if re.search(r"SLIDE|SCHUIF|\bHST\b|LIFT", systeem.upper()):
+            omschr = "Schuifpui"
+        elif re.search(r"\bdeur\b", blok, re.I):
+            omschr = "deur"
+        else:
+            omschr = ""
+        posities.append(Position(
+            positie=nr, stuks=stuks, omschrijving=omschr, systeem=systeem,
+            hoogte_mm=hoogte or 0.0, breedte_mm=breedte or 0.0,
+            oppervlakte_m2=opp if opp is not None else (round((breedte or 0) * (hoogte or 0) / 1e6, 3)),
+            uw=uw, ug=max((r.ug for r in ruiten if r.ug is not None), default=None),
+            materialen={"KADER": [kader] if kader else []}, glas=ruiten,
+        ))
+
+    # tekening rechts naast elk positieblok
+    teller = 0
+    for page in pdf.pages:
+        koppen = sorted(w["top"] for w in page.extract_words() if w["text"] == "Positie")
+        for top in koppen:
+            teller += 1
+            cand = [im for im in page.images if im["x0"] > page.width * 0.45 and 0 <= im["top"] - top < 80]
+            if cand and teller <= len(posities):
+                im = cand[0]
+                buf = io.BytesIO()
+                page.crop((im["x0"], im["top"], im["x1"], im["bottom"])).to_image(resolution=200).original.save(buf, format="PNG")
+                posities[teller - 1].tekening_png_b64 = base64.b64encode(buf.getvalue()).decode()
+
+    return Report(
+        formaat="profel_thermisch_v1", ordernummer=order, referentie=None, referentie_prefix=None,
+        vestigingscode=None, klantnaam=None, huisnummer=None, rapportdatum=datum,
+        besteller=afnemer.group(1).strip() if afnemer else None, posities=posities,
+        leverancier="Profel", vestiging_tekst=afnemer.group(0).strip() if afnemer else None,
     )
 
 
 SUPPORTED_FORMATS = {
     "uw_rapport_v1": lambda t: "Uw rapport" in t and "Pos." in t and "Oppervlakte" in t,
+    "profel_thermisch_v1": lambda t: "Profel" in t and "Thermisch rapport" in t and "Positie" in t,
 }
 
 
@@ -324,6 +405,8 @@ def parse_report(source) -> Report:
         text = "\n".join(p.extract_text() or "" for p in pdf.pages)
         if SUPPORTED_FORMATS["uw_rapport_v1"](text):
             return parse_uw_rapport(pdf, text)
+        if SUPPORTED_FORMATS["profel_thermisch_v1"](text):
+            return parse_profel(pdf)
     raise ValueError(
         "Onbekend rapportformaat. Ondersteund: " + ", ".join(SUPPORTED_FORMATS)
         + ". Stuur een voorbeeld van dit leveranciersformaat door zodat het toegevoegd kan worden."

@@ -20,7 +20,7 @@
   size: A4;
   margin: 18mm 16mm 22mm 16mm;
   @bottom-left {
-    content: "{{ vestiging.weergavenaam }}  ·  {{ vestiging.adres }}, {{ vestiging.postcode_plaats }}  ·  {{ vestiging.telefoon }}  ·  {{ vestiging.email }}";
+    content: "{{ [vestiging.weergavenaam or vestiging.naam, [vestiging.adres, vestiging.postcode_plaats]|select|join(', '), vestiging.telefoon, vestiging.email]|select|join('  ·  ') }}";
     font-family: "Nunito"; font-size: 7.5pt; color: #5E6E82;
   }
   @bottom-right {

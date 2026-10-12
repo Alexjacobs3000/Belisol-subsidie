@@ -416,11 +416,13 @@ def bereken(elementen: list[Element], klant: Optional[dict] = None, vestigingsco
     geldig = [e for e in elementen if e.breedte_mm and e.hoogte_mm]
     report = Report(formaat="offerte", ordernummer=offertenummer, referentie=None, referentie_prefix=None,
                     vestigingscode=vestigingscode, klantnaam=None, huisnummer=(klant or {}).get("huisnummer"),
-                    rapportdatum=None, besteller=None, posities=[_positie(e) for e in geldig])
+                    rapportdatum=None, besteller=None, posities=[_positie(e) for e in geldig],
+                    vestiging_tekst=" ".join(v for v in [(vestiging or {}).get("naam"), (vestiging or {}).get("weergavenaam")] if v) or None)
     res = evaluate(report, klant, cfg)
 
     # meldingen die over het leveranciersrapport gaan, zijn voor sales niet relevant
-    weg = ("Geen meldcode gevonden", "Meldcode ", "Klantnaam op het leveranciersrapport", "Vestigingscode", "KVK-nummer")
+    weg = ("Geen meldcode gevonden", "Meldcode ", "Klantnaam op het leveranciersrapport", "Vestigingscode", "KVK-nummer",
+           "Belisol-vestiging niet herkend")
     meldingen = [w for w in res["waarschuwingen"] if not w.startswith(weg)]
     for e in elementen:
         if not (e.breedte_mm and e.hoogte_mm):

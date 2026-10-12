@@ -58,15 +58,18 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
   aanslag, **groen** = met aanslag. Altijd de zwarte totaalmaat gebruiken (breedte én hoogte), niet de tabel.
   Wordt gelezen met OCR (`subsidie/tekening.py`, Tesseract; `config.json → flens → maat_uit_tekening`);
   onleesbaar/onplausibel → tabelmaat + waarschuwing. Kader 101.331/101.333 = aanslag. Deurvleugel 103.446 = deur.
-- Referentie in rapport: `C26 <vestigingscode> <klantnaam> <huisnummer>`; BNNIM = BeliNijmegen B.V., KVK 22062177.
+- Certix-referentie: `C26 <vestigingscode> <klantnaam> <huisnummer>`. Vestiging via code of trefwoord in besteller/adresblok
+  (`config.json → vestigingen → trefwoorden`): BeliNijmegen B.V. KVK 97595020, BeliTilburg B.V. KVK 22062177 (bevestigd door Alex).
+- Profel thermisch rapport (`profel_thermisch_v1` in parser.py): groot watermerk 'PROFEL' wordt weggefilterd (tekens > 40 pt);
+  afnemer in adresblok (bv. 'DL9752 Belisol Tilburg'); geen klantnaam/referentie; per positie Systeem (bv. 'PVC P8000 - LUMO 80mm',
+  'ALU P4000NT - FUGOSLIDE'), kaderprofiel, Afmeting B * H, 'Oppervlak incl profielen', Uw en glas met Ug. Schuifpuien = glas.
 
 ## Open punten
 - Flens per zijde: nu 4 zijden gelijk bij formaten met maten mét flens. Nodig: regels per zijde (geen aftrek
   onderkant deur met dorpel/slijtkader, koppelnaad/"afgefreesde aanslag", "frame stomp") + Profel-voorbeeld.
-- Profel thermisch rapport en Oknoplast-rapport: nog geen voorbeelden → parser nog niet ondersteund.
+- Profel: flensbreedte T-kader en een rapport met deur nog niet gezien. Oknoplast-eigen rapport: nog geen voorbeeld.
 - Meldcode KA31763 (Certix-deur, uit infomail) staat niet in de RVO-lijst → waarschuwing; laten bevestigen.
 - Monumentbedrag triple/deur hoog en monument met één maatregel (HR++ mogelijk €46) laten bevestigen.
-- KVK-nummers andere vestigingen (bv. Tilburg).
 
 ## Testen
 `python verwerk.py <uw_rapport.pdf> --naam X --pdf uit.pdf` en `streamlit run streamlit_app.py`.

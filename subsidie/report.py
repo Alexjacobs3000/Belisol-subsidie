@@ -56,6 +56,11 @@ def render_html(result: dict, report: Report) -> str:
         korte_label=KORT,
         nl=nl, eur=eur, eur0=eur0, eurr=eurr, datum_nl=datum_nl,
         rb=result["totaal"]["richtbedragen"],
+        footer="  ·  ".join(x for x in [
+            result["vestiging"].get("weergavenaam"),
+            ", ".join(y for y in [result["vestiging"].get("adres"), result["vestiging"].get("postcode_plaats")] if y),
+            result["vestiging"].get("telefoon"), result["vestiging"].get("email")] if x),
+        contact=" · ".join(x for x in [result["vestiging"].get("telefoon"), result["vestiging"].get("email")] if x),
     )
 
 
