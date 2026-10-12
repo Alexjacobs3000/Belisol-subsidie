@@ -58,7 +58,7 @@ klantdocument (PDF) met alle gegevens voor het RVO-formulier en indicatieve subs
   Wordt gelezen met OCR (`subsidie/tekening.py`, Tesseract; `config.json → flens → maat_uit_tekening`);
   onleesbaar/onplausibel → tabelmaat + waarschuwing. Kader 101.331/101.333 = aanslag. Deurvleugel 103.446 = deur.
 - Certix-referentie: `C26 <vestigingscode> <klantnaam> <huisnummer>`. Vestiging via code of trefwoord in besteller/adresblok
-  (`config.json → vestigingen → trefwoorden`): BeliNijmegen B.V. KVK 97595020, BeliTilburg B.V. KVK 22062177 (bevestigd door Alex).
+  (`config.json → vestigingen → trefwoorden`): BeliNijmegen B.V. KVK 88145182, BeliTilburg B.V. KVK 22062177 (bevestigd door Alex).
 - Certix-deuren (Ud ≤ 1,0): Certix 116 → KA31763, Certix 82 → KA31762 (Oknoplast "Isolerende deur Ud <= 1,0", in de
   RVO-lijst sinds okt 2026; de lijst zegt niet welke code bij welk systeem hoort — 116 = KA31763 volgens infomail
   Bisheshar, 82 = KA31762, beide bevestigd door Alex). Regels in `config.json → meldcodes`.
