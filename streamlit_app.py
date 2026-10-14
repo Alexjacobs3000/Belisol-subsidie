@@ -150,6 +150,13 @@ def _bevestig_opnieuw(mod: str):
         st.rerun()
 
 
+def controle_melding(doc: str):
+    """Uitdrukkelijke melding aan de verstrekker: het document is een hulpmiddel, de controle blijft nodig."""
+    st.info(f"**Let op:** de {doc} is een hulpmiddel bij het verstrekken van de nodige documenten. Controleer de gegevens "
+            "(klant, maten en oppervlaktes, U-waarden, meldcodes en bedragen) op juistheid voordat je het document aan de "
+            "klant geeft, zoals je dat ook bij een papieren versie zou doen.", icon=":material/fact_check:")
+
+
 def opnieuw_knop(label: str, key: str, mod: str, **kw):
     """Knop 'nieuw dossier'; vraagt eerst om te downloaden als het document nog niet is gedownload."""
     if st.button(label, key=key, icon=":material/restart_alt:", **kw):
@@ -362,6 +369,7 @@ def pagina_administratie():
 
     bestandsnaam = f"Subsidie-overzicht {result['klant']['naam'] or 'klant'} {result['klant']['huisnummer'] or ''}".strip()
     S[k("bestandsnaam")] = bestandsnaam
+    controle_melding("subsidie-overzicht")
     d1, d2 = st.columns([2, 1])
     d1.download_button("⬇  Download subsidie-overzicht (PDF)", data=pdf, file_name=f"{bestandsnaam}.pdf",
                        mime="application/pdf", type="primary", use_container_width=True, on_click=_markeer_gedownload, args=("adm",))
@@ -546,6 +554,7 @@ def pagina_sales():
 
     bestandsnaam = f"Subsidie-indicatie {result['klant']['naam'] or 'klant'}".strip()
     S[k("bestandsnaam")] = bestandsnaam
+    controle_melding("subsidie-indicatie")
     st.download_button("⬇  Download subsidie-indicatie (PDF)", data=pdf, file_name=f"{bestandsnaam}.pdf",
                        mime="application/pdf", type="primary", width="stretch", on_click=_markeer_gedownload, args=("sal",),
                        disabled=gewijzigd)

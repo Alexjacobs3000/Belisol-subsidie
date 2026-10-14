@@ -185,10 +185,16 @@ Bedragen volgens de RVO-meldcodelijst{% if meldcodelijst.bron %} ({{ meldcodelij
 </div>
 
 <div class="disclaimer">
-  * Richtbedragen zijn een indicatie op basis van de RVO-meldcodelijst en de actuele tarieven
-  (oppervlakte afgerond op hele m²; ≥ 0,50 naar boven). Aan deze bedragen kunnen geen rechten worden ontleend; RVO stelt het definitieve bedrag vast.
-  Minimaal {{ nl(totaal.minimum_m2, 0) }} m², maximaal {{ nl(totaal.maximum_m2, 0) }} m² per aanvraag.
-  Meer info: {{ rvo_link }} · Vragen? Uw Belisol-adviseur helpt u graag{% if contact %}: {{ contact }}{% endif %}.
+  <p>Dit overzicht en de daarin vermelde subsidiebedragen zijn uitsluitend indicatief en vormen geen toezegging of garantie
+  op subsidietoekenning. Aan de vermelde indicatieve bedragen kan geen aanspraak op subsidie worden ontleend. Voor de technische
+  gegevens in dit overzicht is gebruikgemaakt van het thermisch rapport van de fabrikant. De gebruiker dient de gegevens vóór
+  het indienen van een aanvraag te controleren op juistheid, volledigheid en toepasselijkheid op de eigen situatie, voor zover
+  hij deze redelijkerwijs kan beoordelen. Eventuele onjuistheden of twijfels dienen vóór indiening aan de verstrekker te worden
+  gemeld. Het overzicht is opgesteld op basis van de regelgeving, subsidievoorwaarden en tarieven die gelden op de datum van
+  opstelling. Wettelijke rechten die niet kunnen worden uitgesloten of beperkt, blijven onverlet.</p>
+  <p style="margin:0">Berekening: tarieven volgens de RVO-meldcodelijst, oppervlakte per maatregel afgerond op hele m² (≥ 0,50 naar boven);
+  minimaal {{ nl(totaal.minimum_m2, 0) }} m², maximaal {{ nl(totaal.maximum_m2, 0) }} m² per aanvraag.
+  Meer info: {{ rvo_link }} · Vragen? Uw Belisol-adviseur helpt u graag{% if contact %}: {{ contact }}{% endif %}.</p>
 </div>
 
 </body>
